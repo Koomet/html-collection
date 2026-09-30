@@ -1,0 +1,12 @@
+{
+  "html1.html": {
+    "title": "lorem ipsum",
+    "subtext": "Halaman web dashboard admin.",
+    "banner": "assets/thumbnails/html1.png"
+  },
+  "html2.html": {
+    "title": "Dashboard Demo",
+    "subtext": "Contoh dashboard sederhana dengan tampilan modern dan interaktif.",
+    "banner": "assets/thumbnails/default.png"
+  }
+}
