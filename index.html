@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Kumpulan halaman website yang tersedia dalam repository.">
+    <title>Web Library</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="background-decoration background-left" aria-hidden="true">
+        <img src="assets/bg/bg-left.png" alt="">
+    </div>
+    <div class="background-decoration background-right" aria-hidden="true">
+        <img src="assets/bg/bg-right.png" alt="">
+    </div>
+
+    <header class="hero">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <div class="hero-badge"><span class="status-dot"></span>WEB LIBRARY</div>
+            <h1>Explore My <span>Web Collection</span></h1>
+            <p class="hero-description">
+                Kumpulan halaman dan project web yang tersedia dalam satu tempat.
+            </p>
+            <div class="hero-meta">
+                <div class="meta-item">
+                    <strong id="page-count">0</strong>
+                    <span>Pages</span>
+                </div>
+                <div class="meta-divider"></div>
+                <div class="meta-item">
+                    <strong>GitHub</strong>
+                    <span>Repository</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="section-heading">
+                <div>
+                    <span class="section-label">COLLECTION</span>
+                    <h2>Available Pages</h2>
+                </div>
+                <div id="loading-status" class="loading-status">
+                    <span class="loading-spinner"></span>Loading...
+                </div>
+            </div>
+
+            <section id="cards-container" class="cards-grid" aria-live="polite"></section>
+
+            <section id="empty-state" class="state-card hidden">
+                <div class="state-icon">◌</div>
+                <h3>No HTML pages found</h3>
+                <p>Belum ada file HTML yang ditemukan di dalam folder <code>html_folder</code>.</p>
+            </section>
+
+            <section id="error-state" class="state-card hidden">
+                <div class="state-icon">!</div>
+                <h3>Unable to load pages</h3>
+                <p id="error-message">Terjadi kesalahan saat mengambil data dari GitHub.</p>
+                <button id="retry-button" class="retry-button" type="button">Coba Lagi</button>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-inner">
+            <p>© <span id="current-year"></span> Web Library</p>
+            <span class="footer-separator">•</span>
+            <p>Powered by GitHub Pages</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/animejs/dist/bundles/anime.umd.min.js"></script>
+    <script src="assets/js/script.js"></script>
+</body>
+</html>
