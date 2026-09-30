@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#e8fbff">
+<title>Administrator Control Center — Smaga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/hugerte@1/hugerte.min.js"></script>
+<style>
+:root{
+  --sky:#00A8E8; --ocean:#0077B6; --cyan:#00E5FF; --mint:#19DCCB; --green:#38B000; --lime:#70E000;
+  --bg:#E8FAFF; --bg2:#D9F5FB; --surface:rgba(255,255,255,.58); --surface2:rgba(255,255,255,.78);
+  --ink:#062B44; --muted:#5A768A; --line:rgba(0,119,182,.14); --lineStrong:rgba(255,255,255,.9);
+  --sidebar:rgba(243,252,255,.75); --shadow:0 22px 55px -26px rgba(0,88,140,.30),0 1px 0 rgba(255,255,255,.95) inset;
+  --danger:#e14f61; --warning:#db9e17; --success:#269b3d; --font:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+:root[data-theme=dark]{
+  --bg:#041927; --bg2:#06283D; --surface:rgba(255,255,255,.065); --surface2:rgba(255,255,255,.11);
+  --ink:#ECFAFF; --muted:#9FC7D7; --line:rgba(255,255,255,.12); --lineStrong:rgba(255,255,255,.18);
+  --sidebar:rgba(4,25,39,.82); --shadow:0 26px 65px -28px rgba(0,0,0,.72),0 1px 0 rgba(255,255,255,.11) inset;
+}
+/* Fix Status Warna untuk Dark Mode */
+:root[data-theme=dark] .status.published { color: #57d46a; background: rgba(56,176,0,.22); }
+:root[data-theme=dark] .status.draft { color: #ffd166; background: rgba(219,158,23,.22); }
+:root[data-theme=dark] .status.review { color: #64dfdf; background: rgba(0,168,232,.22); }
+:root[data-theme=dark] .status.archived { color: #b1b1b8; background: rgba(120,120,130,.22); }
+
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:var(--font);color:var(--ink);background:linear-gradient(160deg,var(--bg2),var(--bg) 65%);min-height:100vh;overflow-x:hidden}button,input,select,textarea{font:inherit}button{color:inherit}a{color:inherit}
+.aero{position:fixed;inset:0;z-index:-5;overflow:hidden;background:linear-gradient(160deg,var(--bg2),var(--bg) 65%)}.aero i{position:absolute;border-radius:50%;filter:blur(90px)}.aero .a{width:55vmax;height:55vmax;left:-20vmax;top:-16vmax;background:rgba(0,168,232,.31);animation:floatA 28s ease-in-out infinite alternate}.aero .b{width:48vmax;height:48vmax;right:-17vmax;top:35vh;background:rgba(112,224,0,.18);animation:floatB 34s ease-in-out infinite alternate}.aero .c{width:40vmax;height:40vmax;left:25vw;bottom:-20vmax;background:rgba(0,229,255,.16);animation:floatC 37s ease-in-out infinite alternate}@keyframes floatA{to{transform:translate(12vmax,8vmax)}}@keyframes floatB{to{transform:translate(-10vmax,-7vmax)}}@keyframes floatC{to{transform:translate(8vmax,-9vmax)}}
+.bubbles{position:fixed;inset:0;pointer-events:none;z-index:-1;overflow:hidden}.bubble{position:absolute;bottom:-60px;left:var(--x);width:var(--s);height:var(--s);border-radius:50%;border:1px solid rgba(255,255,255,.6);background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.9),rgba(255,255,255,.1) 45%,rgba(0,229,255,.12));opacity:0;animation:rise var(--d) linear var(--delay) infinite}@keyframes rise{0%{opacity:0;transform:translateY(0)}8%{opacity:.7}100%{opacity:0;transform:translate3d(var(--dx),-120vh,0)}}
+.glass{background:var(--surface);border:1px solid var(--lineStrong);backdrop-filter:blur(18px) saturate(145%);-webkit-backdrop-filter:blur(18px) saturate(145%);box-shadow:var(--shadow)}
+.icon{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.shell{display:grid;grid-template-columns:270px 1fr;min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;padding:16px 14px;background:var(--sidebar);border-right:1px solid var(--line);backdrop-filter:blur(22px);z-index:30}.brand{display:flex;align-items:center;gap:10px;padding:8px 10px 18px;text-decoration:none}.brand-mark{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;color:#fff;background:linear-gradient(155deg,#62e3ff,#0077B6 58%,#38B000);box-shadow:inset 0 2px 7px rgba(255,255,255,.62),0 11px 25px -13px rgba(0,119,182,.7)}.brand strong{display:block;font-size:.84rem;letter-spacing:.12em}.brand small{display:block;color:var(--muted);font-size:.62rem;margin-top:3px}
+.side-scroll{height:calc(100vh - 82px);overflow:auto;padding:2px 3px 12px}.side-label{padding:15px 11px 7px;font-size:.63rem;letter-spacing:.15em;color:var(--muted);font-weight:800;text-transform:uppercase}.side-menu{display:grid;gap:3px}.side-item{width:100%;border:0;background:transparent;border-radius:12px;padding:10px 11px;display:flex;align-items:center;gap:11px;text-align:left;cursor:pointer;color:var(--muted);font-size:.8rem;font-weight:700}.side-item:hover{background:var(--surface2);color:var(--ink)}.side-item.active{background:linear-gradient(135deg,rgba(0,168,232,.18),rgba(112,224,0,.11));color:var(--ink);box-shadow:inset 0 0 0 1px rgba(0,168,232,.16)}.side-item .chev{margin-left:auto;opacity:.45}.side-child{padding-left:40px;font-size:.73rem}.side-child.active{border-left:3px solid var(--sky);padding-left:37px}.profile-mini{margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:17px;background:var(--surface2);display:flex;align-items:center;gap:9px}.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;background:linear-gradient(160deg,#59d9ff,#0077B6);font-weight:800;font-size:.72rem}.profile-mini b{display:block;font-size:.72rem}.profile-mini span{display:block;color:var(--muted);font-size:.62rem;margin-top:2px}.profile-mini .dot{width:7px;height:7px;border-radius:50%;background:#57d46a;margin-left:auto;box-shadow:0 0 8px #57d46a}
+.main{min-width:0}.topbar{height:74px;position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:10px 22px;border-bottom:1px solid var(--line);background:rgba(235,250,255,.58);backdrop-filter:blur(18px)}:root[data-theme=dark] .topbar{background:rgba(4,25,39,.65)}.mobile-open{display:none}.menu-btn{display:none}.search{min-width:260px;flex:1;max-width:520px;display:flex;align-items:center;gap:9px;padding:0 13px;height:42px;border:1px solid var(--line);border-radius:13px;background:var(--surface2)}.search input{border:0;background:transparent;outline:0;color:var(--ink);width:100%;font-size:.78rem}.top-actions{display:flex;align-items:center;gap:8px;margin-left:auto}.round{width:42px;height:42px;border-radius:13px;border:1px solid var(--line);background:var(--surface2);display:grid;place-items:center;cursor:pointer}.round:hover{box-shadow:0 0 0 4px rgba(0,229,255,.12)}.admin-pill{display:flex;align-items:center;gap:9px;padding:4px 5px 4px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface2);font-size:.73rem;font-weight:800}.admin-pill .avatar{width:29px;height:29px}.content{padding:28px 28px 50px;max-width:1420px;margin:0 auto}.page{display:none;animation:pageIn .35s cubic-bezier(.2,.8,.2,1)}.page.active{display:block}@keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:22px}.crumb{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;font-weight:800}.page-head h1{margin:6px 0 0;font-size:clamp(1.7rem,3vw,2.55rem);letter-spacing:-.045em}.page-head p{margin:6px 0 0;color:var(--muted);font-size:.85rem}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{min-height:42px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);font-size:.76rem;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px}.btn:hover{transform:translateY(-1px)}.btn-primary{border-color:rgba(255,255,255,.65);color:#073047;background:linear-gradient(180deg,#b9ff55,#70e000 55%,#38b000);box-shadow:0 10px 24px -12px rgba(56,176,0,.8)}.btn-blue{color:#fff;background:linear-gradient(180deg,#18a4eb,#0077B6)}.btn-danger{color:#fff;background:linear-gradient(180deg,#ed7887,#c94458)}.btn-ghost{background:transparent}.btn-xs{min-height:33px;padding:0 9px;border-radius:9px;font-size:.68rem}
+.cards-4{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.cards-4.c5{grid-template-columns:repeat(5,1fr)}.metric{padding:18px;border-radius:20px}.metric-top{display:flex;justify-content:space-between;align-items:center}.metric .orb{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#fff;background:linear-gradient(160deg,var(--a),var(--b));box-shadow:inset 0 2px 5px rgba(255,255,255,.5)}.metric strong{display:block;margin-top:15px;font-size:1.9rem;letter-spacing:-.05em}.metric span{display:block;color:var(--muted);font-size:.69rem;margin-top:3px}.delta{font-size:.62rem;color:var(--success);font-weight:800}.grid-2{display:grid;grid-template-columns:1.35fr .85fr;gap:14px;margin-top:14px}.panel{padding:18px;border-radius:22px}.panel-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:15px}.panel-head h2{font-size:1rem;letter-spacing:-.025em;margin:0}.panel-head small{font-size:.65rem;color:var(--muted)}.chart{height:250px;border-radius:18px;background:linear-gradient(160deg,rgba(0,168,232,.12),rgba(112,224,0,.06));border:1px solid var(--line);position:relative;overflow:hidden}.chart-grid{position:absolute;inset:18px;background-image:linear-gradient(rgba(0,119,182,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(0,119,182,.08) 1px,transparent 1px);background-size:20% 25%}.chart-line{position:absolute;left:24px;right:20px;top:35px;bottom:35px;background:linear-gradient(90deg,transparent 0 2%,#00A8E8 13%,#00E5FF 40%,#19DCCB 69%,#70E000 95%,transparent 98%);clip-path:polygon(0 82%,12% 72%,25% 79%,37% 54%,48% 66%,60% 40%,72% 48%,84% 25%,96% 33%,100% 28%,100% 39%,96% 45%,84% 36%,72% 58%,60% 50%,48% 76%,37% 64%,25% 89%,12% 82%,0 92%);filter:drop-shadow(0 0 10px rgba(0,229,255,.45))}.insights{display:grid;gap:10px}.insight{padding:14px;border-radius:16px;border:1px solid var(--line);background:var(--surface2)}.insight b{font-size:.79rem}.insight p{margin:4px 0 0;font-size:.71rem;color:var(--muted);line-height:1.5}.activity-feed{display:grid;gap:0}.feed{display:grid;grid-template-columns:10px 1fr auto;gap:9px;padding:12px 0;border-bottom:1px solid var(--line)}.feed:last-child{border-bottom:0}.feed .bullet{width:8px;height:8px;border-radius:50%;margin-top:6px;background:var(--c);box-shadow:0 0 8px var(--c)}.feed b{font-size:.73rem}.feed p{margin:2px 0 0;color:var(--muted);font-size:.66rem}.feed time{font-size:.61rem;color:var(--muted)}.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.quick{padding:13px;border-radius:15px;border:1px solid var(--line);background:var(--surface2);cursor:pointer;text-align:left}.quick b{display:block;font-size:.7rem}.quick span{display:block;color:var(--muted);font-size:.62rem;margin-top:3px}
+.table-wrap{border-radius:20px;overflow:auto}.table{width:100%;border-collapse:collapse;min-width:760px}.table th,.table td{padding:13px 14px;text-align:left;border-bottom:1px solid var(--line);font-size:.72rem}.table th{font-size:.63rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:rgba(255,255,255,.12)}.table tr:hover td{background:rgba(255,255,255,.09)}.status{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;font-size:.6rem;font-weight:800}.status.published{color:#18783a;background:rgba(56,176,0,.11)}.status.draft{color:#87631d;background:rgba(219,158,23,.12)}.status.review{color:#08668d;background:rgba(0,168,232,.12)}.status.archived{color:#7b7b83;background:rgba(120,120,130,.12)}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px}.field{height:40px;padding:0 11px;border:1px solid var(--line);border-radius:11px;background:var(--surface2);color:var(--ink);outline:0;font-size:.72rem}.field::placeholder{color:var(--muted)}.toolbar .field{min-width:190px}.toolbar select{min-width:150px}.row-actions{display:flex;gap:5px}.row-link{border:0;background:none;cursor:pointer;color:var(--ocean);font-size:.65rem;font-weight:800;padding:4px}.muted{color:var(--muted)}
+.editor-layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px}.editor-main,.editor-side{padding:18px;border-radius:22px}.editor-title{width:100%;height:49px;border:1px solid var(--line);border-radius:12px;padding:0 13px;background:var(--surface2);color:var(--ink);font-size:1.1rem;font-weight:800;outline:0;margin-bottom:10px}.editor-main textarea{width:100%;height:510px}.editor-side{display:grid;gap:10px;align-content:start}.form-block{display:grid;gap:6px}.form-block label{font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800}.form-block input,.form-block select,.form-block textarea{width:100%;border:1px solid var(--line);border-radius:11px;background:var(--surface2);color:var(--ink);padding:10px;font-size:.73rem;outline:0}.form-block textarea{min-height:88px;resize:vertical}.switch-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}.switch{width:39px;height:23px;border-radius:999px;padding:3px;background:rgba(0,0,0,.12);cursor:pointer}.switch i{display:block;width:17px;height:17px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}.switch.on{background:linear-gradient(90deg,#00A8E8,#38B000)}.switch.on i{transform:translateX(16px)}
+.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}.media-card{border-radius:18px;overflow:hidden}.media-art{aspect-ratio:1.1;background:linear-gradient(145deg,var(--a),var(--b));position:relative}.media-art:before{content:"";position:absolute;inset:11%;border:1px solid rgba(255,255,255,.5);border-radius:16px}.media-art:after{content:"";position:absolute;width:75px;height:75px;right:10%;top:10%;border-radius:50%;background:rgba(255,255,255,.2);box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)}.media-placeholder{position:absolute;left:14%;bottom:13%;right:26%;height:44%;background:rgba(255,255,255,.65);border-radius:12px;transform:rotate(-4deg);box-shadow:0 14px 26px rgba(0,30,50,.2)}.media-info{padding:11px 12px;background:var(--surface2)}.media-info b{font-size:.72rem}.media-info span{display:block;color:var(--muted);font-size:.61rem;margin-top:3px}.check{display:flex;align-items:center;gap:7px;font-size:.7rem;color:var(--muted)}
+.split{display:grid;grid-template-columns:1.05fr .95fr;gap:14px}.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}.calendar span{min-height:35px;border-radius:8px;display:grid;place-items:center;font-size:.65rem;color:var(--muted);background:var(--surface2);border:1px solid var(--line)}.calendar .head{background:transparent;border:0;font-size:.57rem;font-weight:800}.calendar .today{background:linear-gradient(150deg,#14a7e8,#0077B6);color:#fff;border-color:transparent;box-shadow:0 0 16px rgba(0,168,232,.25)}.event-list{display:grid;gap:9px}.event{display:flex;align-items:center;gap:11px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface2)}.event-date{width:43px;height:43px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(160deg,#b9ff55,#38B000);font-size:.67rem;font-weight:900}.event b{font-size:.73rem}.event small{display:block;color:var(--muted);font-size:.6rem;margin-top:2px}
+.builder{display:grid;grid-template-columns:210px minmax(0,1fr) 290px;gap:12px;min-height:610px}.builder-left,.builder-main,.builder-right{padding:15px;border-radius:20px}.builder-left{display:grid;gap:6px;align-content:start}.block{padding:10px;border:1px solid var(--line);background:var(--surface2);border-radius:12px;font-size:.69rem;font-weight:700;cursor:pointer}.block.active{box-shadow:0 0 0 1px rgba(0,168,232,.45);background:rgba(0,168,232,.08)}.preview{height:100%;border:1px solid var(--line);border-radius:16px;overflow:auto;background:linear-gradient(180deg,#d9f6ff,#f7ffff 45%,#dfffe9)}:root[data-theme=dark] .preview{background:linear-gradient(180deg,#082b43,#071c29 55%,#0c3329)}.preview-hero{height:260px;padding:22px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(160deg,rgba(0,168,232,.42),rgba(255,255,255,.16))}.preview-hero h2{font-size:1.45rem;max-width:300px;color:#062B44}.preview-blob{width:170px;height:170px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff,rgba(255,255,255,.25) 35%,rgba(0,168,232,.5));box-shadow:0 25px 45px rgba(0,119,182,.2)}.preview-section{padding:17px}.preview-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.preview-card{height:90px;border-radius:12px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.4)}.builder-right{display:grid;gap:10px;align-content:start}.settings-tabs{display:flex;gap:5px;flex-wrap:wrap}.settings-tab{border:1px solid var(--line);background:var(--surface2);border-radius:9px;padding:8px 10px;font-size:.64rem;font-weight:800;cursor:pointer}.settings-tab.active{background:linear-gradient(150deg,#0da5e8,#0077B6);color:#fff}
+.permissions{display:grid;gap:10px}.role-card{padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--surface2);display:flex;justify-content:space-between;align-items:center}.role-card b{font-size:.76rem}.role-card p{margin:3px 0 0;color:var(--muted);font-size:.61rem}.role-actions{display:flex;gap:5px}.matrix td,.matrix th{text-align:center}.matrix td:first-child,.matrix th:first-child{text-align:left}.tick{font-weight:900;color:var(--success)}.dash{opacity:.45;color:var(--muted)}
+.settings-layout{display:grid;grid-template-columns:200px 1fr;gap:13px}.settings-menu{padding:10px;border-radius:18px;display:grid;gap:4px;align-content:start}.settings-menu button{padding:10px;border:0;background:transparent;border-radius:10px;text-align:left;font-size:.72rem;font-weight:700;cursor:pointer;color:var(--muted)}.settings-menu button.active{background:var(--surface2);color:var(--ink)}.settings-pane{padding:19px;border-radius:20px}.setting-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.setting-grid .full{grid-column:1/-1}.danger-zone{padding:14px;border-radius:15px;border:1px solid rgba(225,79,97,.2);background:rgba(225,79,97,.05)}
+.settings-content{display:none}.settings-content.active{display:block;animation:pageIn .3s ease}
+.modal{position:fixed;inset:0;z-index:90;background:rgba(2,18,28,.62);backdrop-filter:blur(10px);display:none;place-items:center;padding:18px}.modal.open{display:grid}.modal-card{width:min(760px,100%);padding:20px;border-radius:22px;position:relative}.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h2{margin:0;font-size:1rem}.close{width:36px;height:36px;border-radius:10px;background:var(--surface2);border:1px solid var(--line);cursor:pointer}.dropzone{margin-top:15px;border:1px dashed rgba(0,168,232,.45);border-radius:18px;padding:38px;text-align:center;background:linear-gradient(160deg,rgba(0,168,232,.08),rgba(112,224,0,.05));cursor:pointer}.dropzone b{display:block;font-size:.86rem}.dropzone span{display:block;color:var(--muted);font-size:.67rem;margin-top:5px}.upload-list{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:13px}.upload-thumb{height:68px;border-radius:11px;background:linear-gradient(145deg,#7de4ff,#0077B6);border:1px solid var(--line);display:grid;place-items:center;color:#fff;font-size:.6rem;font-weight:800}.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);z-index:120;background:#08263A;color:#fff;padding:10px 14px;border-radius:999px;font-size:.7rem;box-shadow:0 15px 30px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:.25s}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1180px){.shell{grid-template-columns:82px 1fr}.sidebar{padding:13px 9px}.brand{justify-content:center;padding-inline:0}.brand>div{display:none}.brand-mark{width:44px;height:44px}.side-label,.side-item span,.side-item .chev,.profile-mini>div:not(.avatar),.profile-mini .dot{display:none}.side-item{justify-content:center;padding:10px}.cards-4{grid-template-columns:repeat(2,1fr)}.builder{grid-template-columns:180px 1fr}.builder-right{grid-column:1/-1}.editor-layout{grid-template-columns:1fr}.settings-layout{grid-template-columns:1fr}.settings-menu{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:840px){.shell{grid-template-columns:1fr}.sidebar{position:fixed;left:0;top:0;bottom:0;width:280px;transform:translateX(-100%);transition:transform .25s;box-shadow:20px 0 50px rgba(0,60,90,.2)}.sidebar.open{transform:none}.brand{justify-content:flex-start;padding:8px 10px 18px}.brand>div{display:block}.side-label{display:block}.side-item span{display:inline}.side-item .chev{display:block}.profile-mini>div:not(.avatar),.profile-mini .dot{display:block}.topbar{padding-inline:12px}.menu-btn{display:grid}.content{padding:18px 14px 40px}.grid-2,.split{grid-template-columns:1fr}.gallery-grid{grid-template-columns:repeat(2,1fr)}.builder{grid-template-columns:1fr}.builder-left{grid-template-columns:repeat(2,1fr)}.preview-hero{height:220px}.search{min-width:0}.admin-pill span{display:none}}
+@media(max-width:540px){.cards-4{grid-template-columns:1fr}.page-head{display:block}.actions{margin-top:12px}.actions .btn{flex:1}.gallery-grid{grid-template-columns:1fr}.setting-grid{grid-template-columns:1fr}.setting-grid .full{grid-column:auto}.settings-menu{grid-template-columns:1fr 1fr}.top-actions .round:nth-child(1){display:none}.brand small{display:none}.admin-pill{display:none}.quick-grid{grid-template-columns:1fr}.preview-cards{grid-template-columns:1fr}.preview-hero{display:block;padding:18px}.preview-blob{width:100px;height:100px;margin-top:10px}.upload-list{grid-template-columns:repeat(2,1fr)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}.bubbles{display:none}}
+
+/* ===== V2 additions ===== */
+.side-badge{margin-left:auto;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:rgba(0,168,232,.18);color:var(--ocean);font-size:.6rem;font-weight:900;display:grid;place-items:center}
+.side-badge.warn{background:rgba(219,158,23,.2);color:var(--warning)}
+:root[data-theme=dark] .side-badge{color:#7fe0ff}:root[data-theme=dark] .side-badge.warn{color:#ffd166}
+.side-item.locked{opacity:.4;cursor:not-allowed;pointer-events:none}
+.side-item .lock-ic{margin-left:auto;opacity:.6;width:14px;height:14px}
+@media(max-width:1180px){.side-badge{display:none}}
+
+.role-preview{position:relative;margin-left:8px}
+.role-preview-btn{height:42px;padding:0 12px;border-radius:13px;border:1px solid var(--line);background:var(--surface2);display:flex;align-items:center;gap:7px;cursor:pointer;font-size:.72rem;font-weight:700;color:var(--ink)}
+.role-preview-btn b{color:var(--ocean)}.chev-sm{width:13px;height:13px;opacity:.6}
+.role-preview-menu{display:none;position:absolute;top:50px;left:0;min-width:240px;padding:8px;border-radius:16px;background:var(--surface2);border:1px solid var(--line);backdrop-filter:blur(20px);box-shadow:var(--shadow);z-index:60}
+.role-preview-menu.open{display:grid;gap:2px}
+.rpm-label{font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:800;padding:6px 8px 4px}
+.role-preview-menu button{border:0;background:transparent;text-align:left;padding:9px 8px;border-radius:10px;font-size:.75rem;font-weight:700;cursor:pointer;color:var(--ink);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.role-preview-menu button span{color:var(--muted);font-size:.6rem;font-weight:600}
+.role-preview-menu button:hover{background:var(--surface)}
+.role-preview-menu button.active{background:linear-gradient(135deg,rgba(0,168,232,.18),rgba(112,224,0,.11))}
+.role-banner{display:none;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;background:linear-gradient(135deg,rgba(219,158,23,.16),rgba(219,158,23,.05));border:1px solid rgba(219,158,23,.3);font-size:.72rem;font-weight:700;margin-bottom:16px;color:var(--ink)}
+.role-banner.show{display:flex}
+.role-banner button{margin-left:auto;border:0;background:var(--surface2);border-radius:9px;padding:6px 10px;font-size:.65rem;font-weight:800;cursor:pointer}
+@media(max-width:840px){.role-preview{display:none}}
+
+/* Games/Apps grid */
+.gapp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.gapp-card{border-radius:20px;overflow:hidden;display:flex;flex-direction:column}
+.gapp-art{aspect-ratio:16/10;background:linear-gradient(150deg,var(--a),var(--b));position:relative;display:flex;align-items:flex-end;padding:12px}
+.gapp-art .gtype{position:absolute;top:10px;left:10px;padding:4px 9px;border-radius:999px;background:rgba(6,20,30,.4);color:#fff;font-size:.6rem;font-weight:800;backdrop-filter:blur(4px)}
+.gapp-art .gicon{font-size:2.1rem;filter:drop-shadow(0 6px 10px rgba(0,0,0,.2))}
+.gapp-body{padding:13px 14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.gapp-body b{font-size:.82rem}
+.gapp-body .gdesc{color:var(--muted);font-size:.66rem;line-height:1.5;margin:0}
+.gapp-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.gapp-roles{display:flex;gap:4px;flex-wrap:wrap;margin-top:auto}
+.role-chip{padding:3px 8px;border-radius:999px;background:var(--surface2);border:1px solid var(--line);font-size:.58rem;font-weight:800;color:var(--muted)}
+.role-chip.allowed{color:var(--success);border-color:rgba(56,176,0,.3);background:rgba(56,176,0,.08)}
+.gapp-foot{display:flex;gap:6px;padding:10px 14px;border-top:1px solid var(--line)}
+
+/* File scanner / folder tree */
+.scanner-wrap{display:grid;grid-template-columns:260px 1fr;gap:14px}
+.folder-tree{padding:10px;border-radius:18px;display:grid;gap:2px;align-content:start}
+.folder-item{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:10px;font-size:.72rem;font-weight:700;cursor:pointer;color:var(--muted)}
+.folder-item:hover{background:var(--surface2)}
+.folder-item.active{background:linear-gradient(135deg,rgba(0,168,232,.18),rgba(112,224,0,.11));color:var(--ink)}
+.folder-item .fcount{margin-left:auto;font-size:.6rem;color:var(--muted);font-weight:800}
+.scan-list{padding:14px;border-radius:20px}
+.scan-row{display:grid;grid-template-columns:34px 1fr auto auto;align-items:center;gap:11px;padding:11px 8px;border-bottom:1px solid var(--line);font-size:.73rem}
+.scan-row:last-child{border-bottom:0}
+.scan-ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--surface2);font-size:.85rem}
+.scan-row b{font-size:.75rem;display:block}
+.scan-row small{color:var(--muted);font-size:.62rem}
+.tag-new{padding:3px 8px;border-radius:999px;background:rgba(0,168,232,.14);color:var(--ocean);font-size:.58rem;font-weight:900}
+.tag-registered{padding:3px 8px;border-radius:999px;background:rgba(56,176,0,.14);color:var(--success);font-size:.58rem;font-weight:900}
+.scan-summary{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.scan-stat{padding:11px 15px;border-radius:14px;background:var(--surface2);border:1px solid var(--line);font-size:.7rem}
+.scan-stat b{display:block;font-size:1.1rem}
+.rom-console{padding:14px;border-radius:18px;display:flex;align-items:center;gap:12px}
+.rom-console .rc-ic{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:1.2rem;background:linear-gradient(150deg,var(--a),var(--b));color:#fff}
+.rom-console b{font-size:.78rem;display:block}
+.rom-console span{color:var(--muted);font-size:.63rem}
+.rom-console .rc-count{margin-left:auto;text-align:right}
+.rom-console .rc-count strong{font-size:1.1rem;display:block}
+.rom-console .rc-count small{color:var(--muted);font-size:.58rem}
+.note-callout{padding:13px 15px;border-radius:15px;background:rgba(0,168,232,.08);border:1px solid rgba(0,168,232,.22);font-size:.7rem;color:var(--muted);line-height:1.6;display:flex;gap:10px;align-items:flex-start}
+.note-callout b{color:var(--ink)}
+
+/* Permission matrix interactive */
+.matrix .tick, .matrix .dash{cursor:pointer;user-select:none;border-radius:8px;padding:4px 8px;display:inline-block}
+.matrix .tick:hover, .matrix .dash:hover{background:var(--surface2)}
+.matrix-note{font-size:.63rem;color:var(--muted);margin-top:8px}
+
+@media(max-width:1180px){.gapp-grid{grid-template-columns:repeat(2,1fr)}.scanner-wrap{grid-template-columns:1fr}}
+@media(max-width:540px){.gapp-grid{grid-template-columns:1fr}.scan-row{grid-template-columns:30px 1fr;row-gap:4px}.scan-row .tag-new,.scan-row .tag-registered{grid-column:2}}
+</style>
+</head>
+<body>
+<div class="aero"><i class="a"></i><i class="b"></i><i class="c"></i></div>
+<div class="bubbles" id="bubbles"></div>
+
+<div class="shell">
+<aside class="sidebar" id="sidebar">
+  <a href="#dashboard" class="brand" onclick="go('dashboard')">
+    <span class="brand-mark"><svg class="icon" viewBox="0 0 24 24" stroke="white"><path d="m5 12 6-6 3 3-6 6H5v-3Z"/><path d="m13 6 2-2 5 5-2 2"/><path d="M14 18h7"/></svg></span>
+    <div><strong>ADMINISTRATOR</strong><small>SMAGA CONTROL CENTER</small></div>
+  </a>
+  <div class="side-scroll">
+    <div class="side-label">Core</div>
+    <div class="side-menu">
+      <button class="side-item active" data-page="dashboard"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></button>
+    </div>
+    <div class="side-label">Content Management</div>
+    <div class="side-menu">
+      <button class="side-item" data-page="articles"><svg class="icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg><span>Articles</span></button>
+      <button class="side-item side-child" data-page="editor">Article Editor</button>
+      <button class="side-item" data-page="gallery"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span>Gallery</span></button>
+      <button class="side-item" data-page="events"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Events</span></button>
+      <button class="side-item" data-page="media"><svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 15h4l2-3 3 4 2-2 5 5"/></svg><span>Media Library</span></button>
+    </div>
+    <div class="side-label">Website</div>
+    <div class="side-menu">
+      <button class="side-item" data-page="builder"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><rect x="4" y="4" width="16" height="16" rx="2"/></svg><span>Page Builder</span></button>
+      <button class="side-item" data-page="divisions"><svg class="icon" viewBox="0 0 24 24"><path d="M6 3v18M18 3v18M3 6h18M3 18h18"/></svg><span>Divisions</span></button>
+      <button class="side-item" data-page="navigation"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>Navigation</span></button>
+    </div>
+    <div class="side-label">Games &amp; Apps</div>
+    <div class="side-menu">
+      <button class="side-item" data-page="games" data-perm="games"><svg class="icon" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M8 10v4M6 12h4"/><circle cx="16" cy="11" r="1"/><circle cx="18" cy="13" r="1"/></svg><span>Games</span><span class="side-badge" id="badgeGames">6</span></button>
+      <button class="side-item" data-page="apps" data-perm="apps"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg><span>Apps</span></button>
+      <button class="side-item" data-page="romlibrary" data-perm="roms"><svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M9 4v6h6V4M9 15h.01M13 15h.01"/></svg><span>ROM Library</span><span class="side-badge warn" id="badgeRoms">3</span></button>
+    </div>
+    <div class="side-label">System</div>
+    <div class="side-menu">
+      <button class="side-item" data-page="users"><svg class="icon" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Users</span></button>
+      <button class="side-item" data-page="roles"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3 4 7v5c0 5 3.4 8.1 8 9 4.6-.9 8-4 8-9V7l-8-4Z"/><path d="m9 12 2 2 4-4"/></svg><span>Roles & Permissions</span></button>
+      <button class="side-item" data-page="settings"><svg class="icon" viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.8 1.8-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V20h-2.55v-.1A1.7 1.7 0 0 0 11.45 18a1.7 1.7 0 0 0-1.88.34l-.06.06-1.8-1.8.06-.06A1.7 1.7 0 0 0 8.1 15a1.7 1.7 0 0 0-1.56-1H6.4v-2.55h.1a1.7 1.7 0 0 0 1.56-1 1.7 1.7 0 0 0-.34-1.88l-.06-.06 1.8-1.8.06.06A1.7 1.7 0 0 0 11.4 7a1.7 1.7 0 0 0 1.03-1.56V5h2.55v.1A1.7 1.7 0 0 0 16 7a1.7 1.7 0 0 0 1.88-.34l.06-.06 1.8 1.8-.06.06A1.7 1.7 0 0 0 19.4 10a1.7 1.7 0 0 0 1.56 1h.1v2.55h-.1a1.7 1.7 0 0 0-1.56 1Z"/></svg><span>Settings</span></button>
+      <button class="side-item" data-page="logs"><svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Activity Logs</span></button>
+    </div>
+    <div class="profile-mini"><span class="avatar">AD</span><div><b>Admin Smaga</b><span>Super Admin</span></div><i class="dot"></i></div>
+  </div>
+</aside>
+
+<section class="main">
+  <header class="topbar">
+    <button class="round menu-btn" id="mobileMenu" aria-label="Buka menu"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <div class="search"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="globalSearch" placeholder="Search content, gallery, users, games..." autocomplete="off"></div>
+    <div class="role-preview" id="rolePreviewWrap">
+      <button class="role-preview-btn" id="rolePreviewBtn" title="Preview tampilan sebagai role lain">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 3 4 7v5c0 5 3.4 8.1 8 9 4.6-.9 8-4 8-9V7l-8-4Z"/></svg>
+        <span>Preview: <b id="rolePreviewLabel">Super Admin</b></span>
+        <svg class="icon chev-sm" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="role-preview-menu" id="rolePreviewMenu">
+        <div class="rpm-label">Lihat Control Center sebagai:</div>
+        <button data-role="super">👑 Super Admin <span>Akses penuh</span></button>
+        <button data-role="admin">🛡 Administrator <span>Tanpa Roles &amp; Users</span></button>
+        <button data-role="editor">✎ Editor <span>Konten + publish</span></button>
+        <button data-role="contributor">✏️ Contributor <span>Draft only</span></button>
+        <button data-role="gamesdiv">🎮 Divisi Game <span>Games/Apps/ROM saja</span></button>
+        <button data-role="viewer">👁 Viewer <span>Read-only</span></button>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="round" id="themeBtn" title="Toggle theme"><svg class="icon moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg><svg class="icon sun" style="display:none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2m-10-10h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg></button>
+      <button class="round" id="notifyBtn" title="Notifications"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></button>
+      <div class="admin-pill"><span>Admin Smaga</span><span class="avatar">AD</span></div>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="role-banner" id="roleBanner"><span>🔎</span><span>Kamu sedang <b>preview tampilan sebagai <span id="roleBannerName">Editor</span></b> — beberapa menu &amp; tombol disembunyikan sesuai hak akses role ini.</span><button onclick="setRolePreview('super')">Kembali ke Super Admin</button></div>
+    <!-- DASHBOARD -->
+    <section class="page active" id="page-dashboard">
+      <div class="page-head"><div><div class="crumb">Overview / Dashboard</div><h1>Selamat datang kembali, Admin.</h1><p>Pusat kontrol konten dan sistem Administrator Smaga.</p></div><div class="actions"><button class="btn btn-glass" onclick="go('gallery')">View Website</button><button class="btn btn-primary" onclick="openUpload()">＋ Upload Documentation</button></div></div>
+      <div class="cards-4 c5">
+        <div class="metric glass" style="--a:#59d9ff;--b:#0077B6"><div class="metric-top"><span class="orb">👥</span><span class="delta">+8.4%</span></div><strong>48</strong><span>Active Members</span></div>
+        <div class="metric glass" style="--a:#89ffe9;--b:#00a99d"><div class="metric-top"><span class="orb">✦</span><span class="delta">+12.1%</span></div><strong>26</strong><span>Published Works</span></div>
+        <div class="metric glass" style="--a:#c6ff66;--b:#38B000"><div class="metric-top"><span class="orb">▧</span><span class="delta">+5 items</span></div><strong>18</strong><span>Gallery Items</span></div>
+        <div class="metric glass" style="--a:#8db7ff;--b:#375be4"><div class="metric-top"><span class="orb">◷</span><span class="delta">Next: 25 Sep</span></div><strong>4</strong><span>Upcoming Events</span></div>
+        <div class="metric glass" style="--a:#f7b9ff;--b:#8b3fd6;cursor:pointer" onclick="go('games')"><div class="metric-top"><span class="orb">🎮</span><span class="delta" style="color:var(--ocean)">6 baru</span></div><strong>24</strong><span>Games &amp; Apps terdaftar</span></div>
+      </div>
+      <div class="grid-2">
+        <article class="panel glass"><div class="panel-head"><div><h2>Content activity</h2><small>30 hari terakhir</small></div><button class="btn btn-xs">Last 30 days ▾</button></div><div class="chart"><div class="chart-grid"></div><div class="chart-line"></div></div></article>
+        <article class="panel glass"><div class="panel-head"><div><h2>Quick actions</h2><small>Akses fitur yang sering dipakai</small></div></div><div class="quick-grid"><button class="quick" onclick="go('editor')"><b>＋ New Article</b><span>Buat tulisan baru</span></button><button class="quick" onclick="openUpload()"><b>↑ Upload Gallery</b><span>Tambah dokumentasi</span></button><button class="quick" onclick="go('events')"><b>＋ Add Event</b><span>Jadwalkan kegiatan</span></button><button class="quick" onclick="go('builder')"><b>✦ Edit Homepage</b><span>Atur section publik</span></button><button class="quick" onclick="go('games')"><b>🎮 Kelola Games</b><span>Review 6 game baru</span></button></div><div class="panel-head" style="margin-top:22px;margin-bottom:5px"><div><h2>System health</h2></div><span class="status published">● Healthy</span></div><div class="insights"><div class="insight"><b>Storage</b><p>2.4 GB / 10 GB used</p></div><div class="insight"><b>Last backup</b><p>Today · 03:00 WIB</p></div></div></article>
+      </div>
+      <div class="grid-2">
+        <article class="panel glass"><div class="panel-head"><div><h2>Recent activity</h2><small>Aktivitas admin terbaru</small></div><button class="row-link" onclick="go('logs')">View all →</button></div><div class="activity-feed"><div class="feed"><span class="bullet" style="--c:#00A8E8"></span><div><b>Raka uploaded 14 gallery images</b><p>Gallery / Design Sprint</p></div><time>20:42</time></div><div class="feed"><span class="bullet" style="--c:#70E000"></span><div><b>Admin updated homepage hero</b><p>Website / Homepage</p></div><time>20:15</time></div><div class="feed"><span class="bullet" style="--c:#19DCCB"></span><div><b>Nanda published an article</b><p>“Workshop Web Development”</p></div><time>19:48</time></div><div class="feed"><span class="bullet" style="--c:#375be4"></span><div><b>Admin changed theme setting</b><p>Settings / Appearance</p></div><time>19:20</time></div></div></article>
+        <article class="panel glass"><div class="panel-head"><div><h2>Publishing queue</h2><small>Konten yang menunggu tindakan</small></div></div><div class="insights"><div class="insight"><b>3 Draft Articles</b><p>Masih perlu diselesaikan sebelum publish.</p></div><div class="insight"><b>2 Items in Review</b><p>Menunggu editor approval.</p></div><div class="insight"><b>1 Scheduled</b><p>“School Coverage” · 25 Sep 08:00.</p></div></div></article>
+      </div>
+    </section>
+
+    <!-- ARTICLES -->
+    <section class="page" id="page-articles">
+      <div class="page-head"><div><div class="crumb">Content Management / Articles</div><h1>Articles</h1><p>Kelola artikel, draft, review, dan publikasi.</p></div><div class="actions"><button class="btn btn-glass">Export</button><button class="btn btn-primary" onclick="go('editor')">＋ New Article</button></div></div>
+      <div class="toolbar"><input class="field" placeholder="Search article..." oninput="filterRows(this,'.article-row')"><select class="field"><option>All status</option><option>Published</option><option>Draft</option><option>Review</option><option>Archived</option></select><select class="field"><option>All categories</option><option>Jurnalistik</option><option>Design</option><option>Programming</option></select></div>
+      <div class="table-wrap glass"><table class="table"><thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Status</th><th>Updated</th><th>Action</th></tr></thead><tbody>
+        <tr class="article-row"><td><b>Workshop Web Development</b><br><span class="muted">Cara anggota belajar lewat project</span></td><td>Programming</td><td>Raka</td><td><span class="status published">Published</span></td><td>22 Sep 2026</td><td><div class="row-actions"><button class="row-link" onclick="go('editor')">Edit</button><button class="row-link">View</button></div></td></tr>
+        <tr class="article-row"><td><b>School Coverage: Pekan Olahraga</b><br><span class="muted">Cerita dari lapangan</span></td><td>Jurnalistik</td><td>Nanda</td><td><span class="status review">Review</span></td><td>21 Sep 2026</td><td><div class="row-actions"><button class="row-link" onclick="go('editor')">Review</button><button class="row-link">Preview</button></div></td></tr>
+        <tr class="article-row"><td><b>Event Identity System</b><br><span class="muted">Membangun visual yang konsisten</span></td><td>Desain</td><td>Fira</td><td><span class="status draft">Draft</span></td><td>20 Sep 2026</td><td><div class="row-actions"><button class="row-link" onclick="go('editor')">Edit</button><button class="row-link">Delete</button></div></td></tr>
+        <tr class="article-row"><td><b>Digital Attendance Prototype</b><br><span class="muted">Eksperimen utility sekolah</span></td><td>Programming</td><td>Admin</td><td><span class="status published">Published</span></td><td>18 Sep 2026</td><td><div class="row-actions"><button class="row-link">Edit</button><button class="row-link">View</button></div></td></tr>
+      </tbody></table></div>
+    </section>
+
+    <!-- EDITOR -->
+    <section class="page" id="page-editor">
+      <div class="page-head"><div><div class="crumb">Content Management / Article Editor</div><h1>Article Editor</h1><p>HugeRTE menjadi editor teks utama untuk konten artikel.</p></div><div class="actions"><button class="btn btn-glass" onclick="showToast('Draft disimpan secara simulasi.')">Save Draft</button><button class="btn btn-primary" onclick="showToast('Artikel dipublish secara simulasi.')">Publish</button></div></div>
+      <div class="editor-layout"><article class="editor-main glass"><input class="editor-title" value="Workshop Web Development — Belajar dengan Membangun"><textarea id="articleEditor"><h2>Belajar programming dengan project nyata</h2><p>Administrator Smaga menggunakan project kecil untuk membuat anggota belajar dari kebutuhan, mencoba solusi, dan memperbaiki hasilnya.</p><h3>Yang dipelajari</h3><ul><li>Struktur HTML</li><li>Styling dengan CSS</li><li>Interaksi JavaScript</li><li>Workflow Git</li></ul><p><strong>Catatan:</strong> konten ini masih berupa contoh untuk prototype.</p></textarea></article><aside class="editor-side glass"><div class="form-block"><label>Category</label><select><option>Programming</option><option>Jurnalistik</option><option>Desain Grafis</option></select></div><div class="form-block"><label>Slug</label><input value="workshop-web-development"></div><div class="form-block"><label>Excerpt</label><textarea>Ringkasan singkat untuk kartu artikel dan SEO.</textarea></div><div class="form-block"><label>Featured Image</label><button class="btn btn-glass" onclick="openUpload()">Choose media</button></div><div class="switch-row"><div><b style="font-size:.7rem">Featured</b><div class="muted" style="font-size:.6rem">Tampilkan sebagai unggulan</div></div><div class="switch on"><i></i></div></div><div class="switch-row"><div><b style="font-size:.7rem">Comments</b><div class="muted" style="font-size:.6rem">Izinkan komentar</div></div><div class="switch"><i></i></div></div><div class="form-block"><label>Publish date</label><input type="datetime-local" value="2026-09-25T08:00"></div></aside></div>
+    </section>
+
+    <!-- GALLERY -->
+    <section class="page" id="page-gallery">
+      <div class="page-head"><div><div class="crumb">Content Management / Gallery</div><h1>Gallery Manager</h1><p>Kelola dokumentasi kegiatan Administrator Smaga.</p></div><div class="actions"><button class="btn btn-glass" onclick="showToast('Preview publik dibuka secara simulasi.')">Preview</button><button class="btn btn-primary" onclick="openUpload()">↑ Upload Photos</button></div></div>
+      <div class="toolbar"><input class="field" placeholder="Search gallery..." oninput="filterCards(this,'#galleryGrid .media-card')"><select class="field" onchange="filterGallery(this.value)"><option value="all">All categories</option><option value="Programming">Programming</option><option value="Jurnalistik">Jurnalistik</option><option value="Desain Grafis">Desain Grafis</option><option value="Kolaborasi">Kolaborasi</option></select><select class="field"><option>All albums</option><option>Design Sprint</option><option>School Coverage</option><option>Tech Lab</option></select></div>
+      <div class="gallery-grid" id="galleryGrid">
+        <article class="media-card glass" data-category="Programming" style="--a:#45cff9;--b:#0077B6"><div class="media-art"><div class="media-placeholder"></div></div><div class="media-info"><b>Web Development Workshop</b><span>Programming · Tech Lab</span></div></article>
+        <article class="media-card glass" data-category="Jurnalistik" style="--a:#72ddff;--b:#006b91"><div class="media-art"><div class="media-placeholder"></div></div><div class="media-info"><b>School Coverage</b><span>Jurnalistik · Field Work</span></div></article>
+        <article class="media-card glass" data-category="Desain Grafis" style="--a:#73f4de;--b:#00a99d"><div class="media-art"><div class="media-placeholder" style="transform:rotate(5deg);left:18%;right:18%"></div></div><div class="media-info"><b>Design Sprint</b><span>Desain Grafis · Creative Lab</span></div></article>
+        <article class="media-card glass" data-category="Kolaborasi" style="--a:#98b9ff;--b:#375be4"><div class="media-art"><div class="media-placeholder"></div></div><div class="media-info"><b>Cross Division Night</b><span>Kolaborasi · Project Day</span></div></article>
+        <article class="media-card glass" data-category="Programming" style="--a:#b4ff66;--b:#2f8d00"><div class="media-art"><div class="media-placeholder"></div></div><div class="media-info"><b>Build & Debug Night</b><span>Programming · Tech Lab</span></div></article>
+        <article class="media-card glass" data-category="Jurnalistik" style="--a:#5de1ff;--b:#0077B6"><div class="media-art"><div class="media-placeholder"></div></div><div class="media-info"><b>Documentation Day</b><span>Jurnalistik · Media Desk</span></div></article>
+        <article class="media-card glass" data-category="Desain Grafis" style="--a:#bbfff5;--b:#00a99d"><div class="media-art"><div class="media-placeholder"></div></div><div class="media-info"><b>UI/UX Practice</b><span>Desain Grafis · Creative Lab</span></div></article>
+        <article class="media-card glass" data-category="Kolaborasi" style="--a:#a8ecff;--b:#0077B6"><div class="media-art"><div class="media-placeholder"></div></div><div class="media-info"><b>Behind The Story</b><span>Kolaborasi · Project Day</span></div></article>
+      </div>
+    </section>
+
+    <!-- MEDIA -->
+    <section class="page" id="page-media">
+      <div class="page-head"><div><div class="crumb">Content Management / Media Library</div><h1>Media Library</h1><p>Satu tempat untuk semua aset gambar dan media website.</p></div><div class="actions"><button class="btn btn-primary" onclick="openUpload()">↑ Upload Media</button></div></div>
+      <div class="grid-2"><article class="panel glass"><div class="panel-head"><div><h2>Storage</h2><small>2.4 GB of 10 GB</small></div><b>24%</b></div><div style="height:12px;border-radius:999px;background:var(--surface2);overflow:hidden"><div style="width:24%;height:100%;border-radius:999px;background:linear-gradient(90deg,#00A8E8,#70E000)"></div></div><div class="insights" style="margin-top:15px"><div class="insight"><b>Images</b><p>1,124 files · 1.7 GB</p></div><div class="insight"><b>Videos</b><p>42 files · 0.5 GB</p></div><div class="insight"><b>Documents</b><p>84 files · 0.2 GB</p></div></div></article><article class="panel glass"><div class="panel-head"><div><h2>Folders</h2><small>Public media structure</small></div></div><div class="insights"><div class="insight"><b>/gallery</b><p>Documentation and activities</p></div><div class="insight"><b>/articles</b><p>Article covers</p></div><div class="insight"><b>/brand</b><p>Logo, favicon, identity assets</p></div><div class="insight"><b>/events</b><p>Posters and promotional materials</p></div></div></article></div>
+    </section>
+
+    <!-- EVENTS -->
+    <section class="page" id="page-events">
+      <div class="page-head"><div><div class="crumb">Content Management / Events</div><h1>Events</h1><p>Kelola agenda kegiatan dan hubungan event → dokumentasi → publikasi.</p></div><div class="actions"><button class="btn btn-primary" onclick="showToast('Form create event siap diintegrasikan ke Laravel.')">＋ Create Event</button></div></div>
+      <div class="split"><article class="panel glass"><div class="panel-head"><div><h2>September 2026</h2><small>Calendar prototype</small></div></div><div class="calendar"><span class="head">MON</span><span class="head">TUE</span><span class="head">WED</span><span class="head">THU</span><span class="head">FRI</span><span class="head">SAT</span><span class="head">SUN</span><span></span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span class="today">22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span></div></article><article class="panel glass"><div class="panel-head"><div><h2>Upcoming</h2><small>Next activities</small></div></div><div class="event-list"><div class="event"><div class="event-date">25<br>SEP</div><div><b>Build Session</b><small>Programming · 15:30 · Lab</small></div></div><div class="event"><div class="event-date" style="background:linear-gradient(160deg,#8ffff0,#00a99d)">28<br>SEP</div><div><b>Media Workshop</b><small>Jurnalistik + Desain · 13:00</small></div></div><div class="event"><div class="event-date" style="background:linear-gradient(160deg,#a6f7ff,#0077B6)">03<br>OCT</div><div><b>Cross Division Night</b><small>All divisions · 18:00</small></div></div></div></article></div>
+    </section>
+
+    <!-- BUILDER -->
+    <section class="page" id="page-builder">
+      <div class="page-head"><div><div class="crumb">Website / Page Builder</div><h1>Homepage Builder</h1><p>Edit section website dari satu control center.</p></div><div class="actions"><button class="btn btn-glass">Preview</button><button class="btn btn-primary" onclick="showToast('Perubahan builder disimpan secara simulasi.')">Save Changes</button></div></div>
+      <div class="builder"><aside class="builder-left glass"><button class="block active">01 · Hero</button><button class="block">02 · About</button><button class="block">03 · Divisions</button><button class="block">04 · Featured Works</button><button class="block">05 · Activities</button><button class="block">06 · Join CTA</button><button class="block">＋ Add section</button></aside><div class="builder-main glass"><div class="preview"><div class="preview-hero"><div><div style="font-size:.58rem;font-weight:800;letter-spacing:.12em;color:#0077B6">HERO SECTION</div><h2>Mengubah ide sekolah menjadi karya digital.</h2><div style="font-size:.64rem;color:#547387;max-width:290px">Preview canvas website publik.</div></div><div class="preview-blob"></div></div><div class="preview-section"><div style="font-size:.7rem;font-weight:800;margin-bottom:8px">Three divisions</div><div class="preview-cards"><div class="preview-card"></div><div class="preview-card"></div><div class="preview-card"></div></div></div></div></div><aside class="builder-right glass"><div class="settings-tabs"><button class="settings-tab active">Content</button><button class="settings-tab">Style</button><button class="settings-tab">SEO</button></div><div class="form-block"><label>Headline</label><textarea style="min-height:100px">Mengubah ide sekolah menjadi karya digital.</textarea></div><div class="form-block"><label>Description</label><textarea style="min-height:100px">Ruang kolaborasi untuk jurnalistik, desain grafis, dan programming.</textarea></div><div class="form-block"><label>Primary CTA</label><input value="Jelajahi Divisi"></div><div class="form-block"><label>Secondary CTA</label><input value="Lihat Karya"></div><div class="switch-row"><div><b style="font-size:.7rem">Visible</b><div class="muted" style="font-size:.6rem">Tampilkan section publik</div></div><div class="switch on"><i></i></div></div></aside></div>
+    </section>
+
+    <!-- DIVISIONS -->
+    <section class="page" id="page-divisions">
+      <div class="page-head"><div><div class="crumb">Website / Divisions</div><h1>Division Manager</h1><p>Kelola profil dan output tiga divisi Administrator.</p></div></div>
+      <div class="cards-4" style="grid-template-columns:repeat(3,1fr)"><div class="panel glass"><span class="orb" style="display:grid;place-items:center;width:48px;height:48px;border-radius:14px;background:linear-gradient(160deg,#57d9ff,#0077B6);color:#fff">✎</span><h2 style="margin-top:12px;font-size:1rem">Jurnalistik</h2><p class="muted" style="font-size:.7rem;margin-top:6px">Meliput · menulis · mewawancarai</p><div class="tag" style="margin-top:12px">Active</div><div class="actions" style="margin-top:14px"><button class="btn btn-xs">Edit division</button></div></div><div class="panel glass"><span class="orb" style="display:grid;place-items:center;width:48px;height:48px;border-radius:14px;background:linear-gradient(160deg,#86fbe9,#00a99d);color:#fff">✦</span><h2 style="margin-top:12px;font-size:1rem">Desain Grafis</h2><p class="muted" style="font-size:.7rem;margin-top:6px">Visual · branding · UI/UX</p><div class="tag" style="margin-top:12px">Active</div><div class="actions" style="margin-top:14px"><button class="btn btn-xs">Edit division</button></div></div><div class="panel glass"><span class="orb" style="display:grid;place-items:center;width:48px;height:48px;border-radius:14px;background:linear-gradient(160deg,#c4ff65,#38B000);color:#fff">&lt;/&gt;</span><h2 style="margin-top:12px;font-size:1rem">Programming</h2><p class="muted" style="font-size:.7rem;margin-top:6px">Website · app · database</p><div class="tag" style="margin-top:12px">Active</div><div class="actions" style="margin-top:14px"><button class="btn btn-xs">Edit division</button></div></div></div>
+    </section>
+
+    <!-- NAVIGATION -->
+    <section class="page" id="page-navigation">
+      <div class="page-head"><div><div class="crumb">Website / Navigation</div><h1>Navigation Manager</h1><p>Atur menu header dan footer website publik.</p></div><button class="btn btn-primary" onclick="showToast('Navigation order disimpan secara simulasi.')">Save Order</button></div>
+      <div class="panel glass"><div class="table-wrap"><table class="table"><thead><tr><th>Label</th><th>Target</th><th>Type</th><th>Visible</th><th>Order</th><th>Actions</th></tr></thead><tbody><tr><td><b>Beranda</b></td><td>#beranda</td><td>Section</td><td><span class="status published">Visible</span></td><td>01</td><td>↕ Edit</td></tr><tr><td><b>Profil</b></td><td>#profil</td><td>Section</td><td><span class="status published">Visible</span></td><td>02</td><td>↕ Edit</td></tr><tr><td><b>Divisi</b></td><td>#divisi</td><td>Section</td><td><span class="status published">Visible</span></td><td>03</td><td>↕ Edit</td></tr><tr><td><b>Galeri</b></td><td>/galeri-kegiatan</td><td>Page</td><td><span class="status published">Visible</span></td><td>04</td><td>↕ Edit</td></tr><tr><td><b>Join Club</b></td><td>#gabung</td><td>CTA</td><td><span class="status published">Visible</span></td><td>05</td><td>↕ Edit</td></tr></tbody></table></div></div>
+    </section>
+
+    <!-- GAMES -->
+    <section class="page" id="page-games">
+      <div class="page-head"><div><div class="crumb">Games &amp; Apps / Games</div><h1>Games Manager</h1><p>Katalog game HTML/emulator yang di-host di folder khusus anggota.</p></div><div class="actions"><button class="btn btn-glass" onclick="go('romlibrary')">ROM Library</button><button class="btn btn-primary" onclick="go('scanner-games')">🔍 Scan Folder</button></div></div>
+      <div class="scan-summary">
+        <div class="scan-stat glass"><b>24</b>Total game terdaftar</div>
+        <div class="scan-stat glass"><b style="color:var(--ocean)">6</b>Belum diregister</div>
+        <div class="scan-stat glass"><b style="color:var(--success)">19</b>Published</div>
+        <div class="scan-stat glass"><b style="color:var(--warning)">5</b>Restricted role</div>
+      </div>
+      <div class="toolbar"><input class="field" placeholder="Search game..." oninput="filterCards(this,'#gamesGrid .gapp-card')"><select class="field"><option>All type</option><option>Arcade</option><option>Puzzle</option><option>Emulator</option><option>Board</option></select><select class="field"><option>All status</option><option>Published</option><option>Draft</option><option>Restricted</option></select></div>
+      <div class="gapp-grid" id="gamesGrid">
+        <article class="gapp-card glass"><div class="gapp-art" style="--a:#5de1ff;--b:#0077B6"><span class="gtype">Arcade</span><span class="gicon">🕹️</span></div><div class="gapp-body"><b>Space Runner</b><p class="gdesc">HTML5 endless-runner, kontrol keyboard + touch.</p><div class="gapp-meta"><span class="status published">Published</span></div><div class="gapp-roles"><span class="role-chip allowed">Super Admin</span><span class="role-chip allowed">Admin</span><span class="role-chip allowed">Editor</span></div></div><div class="gapp-foot"><button class="btn btn-xs" onclick="showToast('Detail game dibuka (simulasi).')">Detail</button><button class="btn btn-xs btn-glass" onclick="showToast('Membuka file game di tab baru (simulasi).')">Buka File</button></div></article>
+        <article class="gapp-card glass"><div class="gapp-art" style="--a:#c6ff66;--b:#38B000"><span class="gtype">Puzzle</span><span class="gicon">🧩</span></div><div class="gapp-body"><b>Block Merge</b><p class="gdesc">Puzzle angka ala 2048, single file HTML.</p><div class="gapp-meta"><span class="status published">Published</span></div><div class="gapp-roles"><span class="role-chip allowed">Semua Role</span></div></div><div class="gapp-foot"><button class="btn btn-xs" onclick="showToast('Detail game dibuka (simulasi).')">Detail</button><button class="btn btn-xs btn-glass" onclick="showToast('Membuka file game di tab baru (simulasi).')">Buka File</button></div></article>
+        <article class="gapp-card glass"><div class="gapp-art" style="--a:#f7b9ff;--b:#8b3fd6"><span class="gtype">Emulator</span><span class="gicon">🎮</span></div><div class="gapp-body"><b>NES Player</b><p class="gdesc">Emulator NES berbasis JSNES, butuh folder ROM terpisah.</p><div class="gapp-meta"><span class="status review">Review</span><span class="status draft" style="margin-left:4px">Perlu ROM</span></div><div class="gapp-roles"><span class="role-chip allowed">Super Admin</span><span class="role-chip">Editor</span><span class="role-chip">Contributor</span></div></div><div class="gapp-foot"><button class="btn btn-xs" onclick="go('romlibrary')">Kelola ROM</button><button class="btn btn-xs btn-glass" onclick="showToast('Membuka file game di tab baru (simulasi).')">Buka File</button></div></article>
+        <article class="gapp-card glass"><div class="gapp-art" style="--a:#ffd48f;--b:#db9e17"><span class="gtype">Board</span><span class="gicon">♟️</span></div><div class="gapp-body"><b>Catur Klasik</b><p class="gdesc">Board game 2 pemain, drag &amp; drop.</p><div class="gapp-meta"><span class="status draft">Draft</span></div><div class="gapp-roles"><span class="role-chip allowed">Super Admin</span><span class="role-chip allowed">Admin</span></div></div><div class="gapp-foot"><button class="btn btn-xs" onclick="showToast('Detail game dibuka (simulasi).')">Detail</button><button class="btn btn-xs btn-glass" onclick="showToast('Membuka file game di tab baru (simulasi).')">Buka File</button></div></article>
+        <article class="gapp-card glass"><div class="gapp-art" style="--a:#8db7ff;--b:#375be4"><span class="gtype">Emulator</span><span class="gicon">🕹️</span></div><div class="gapp-body"><b>GBA Player</b><p class="gdesc">Emulator Game Boy Advance, multi-ROM slot.</p><div class="gapp-meta"><span class="status published">Published</span></div><div class="gapp-roles"><span class="role-chip allowed">Super Admin</span><span class="role-chip allowed">Divisi Game</span></div></div><div class="gapp-foot"><button class="btn btn-xs" onclick="go('romlibrary')">Kelola ROM</button><button class="btn btn-xs btn-glass" onclick="showToast('Membuka file game di tab baru (simulasi).')">Buka File</button></div></article>
+        <article class="gapp-card glass" style="opacity:.85"><div class="gapp-art" style="--a:#dfe3ea;--b:#8b93a1"><span class="gtype">Arcade</span><span class="gicon">❓</span></div><div class="gapp-body"><b>untitled-game-07.html</b><p class="gdesc">File terdeteksi di folder tapi belum diberi metadata.</p><div class="gapp-meta"><span class="tag-new">Belum Terdaftar</span></div><div class="gapp-roles"><span class="role-chip">Belum diatur</span></div></div><div class="gapp-foot"><button class="btn btn-xs btn-primary" onclick="showToast('Form register game dibuka (simulasi).')">＋ Register</button></div></article>
+      </div>
+      <div class="note-callout glass" style="margin-top:16px"><span>ℹ️</span><div><b>Catatan prototype:</b> daftar di atas masih data contoh. Saat dihubungkan ke server, sistem akan memindai folder <code>/public/games</code> secara otomatis dan menampilkan setiap file <code>.html</code> baru sebagai kandidat "Belum Terdaftar" di sini.</div></div>
+    </section>
+
+    <!-- APPS -->
+    <section class="page" id="page-apps">
+      <div class="page-head"><div><div class="crumb">Games &amp; Apps / Apps</div><h1>Apps Manager</h1><p>Katalog aplikasi HTML (tools, utilitas) khusus anggota.</p></div><div class="actions"><button class="btn btn-primary" onclick="showToast('Scan folder /public/apps (simulasi).')">🔍 Scan Folder</button></div></div>
+      <div class="toolbar"><input class="field" placeholder="Search app..." oninput="filterCards(this,'#appsGrid .gapp-card')"><select class="field"><option>All category</option><option>Productivity</option><option>Utility</option><option>Design</option></select></div>
+      <div class="gapp-grid" id="appsGrid">
+        <article class="gapp-card glass"><div class="gapp-art" style="--a:#89ffe9;--b:#00a99d"><span class="gtype">Utility</span><span class="gicon">🧮</span></div><div class="gapp-body"><b>Grade Calculator</b><p class="gdesc">Kalkulator nilai rapor otomatis untuk anggota.</p><div class="gapp-meta"><span class="status published">Published</span></div><div class="gapp-roles"><span class="role-chip allowed">Semua Role</span></div></div><div class="gapp-foot"><button class="btn btn-xs" onclick="showToast('Detail app dibuka (simulasi).')">Detail</button><button class="btn btn-xs btn-glass" onclick="showToast('Membuka file app di tab baru (simulasi).')">Buka File</button></div></article>
+        <article class="gapp-card glass"><div class="gapp-art" style="--a:#c6ff66;--b:#38B000"><span class="gtype">Productivity</span><span class="gicon">📝</span></div><div class="gapp-body"><b>Note Board</b><p class="gdesc">Sticky note kolaboratif untuk divisi.</p><div class="gapp-meta"><span class="status published">Published</span></div><div class="gapp-roles"><span class="role-chip allowed">Editor</span><span class="role-chip allowed">Contributor</span></div></div><div class="gapp-foot"><button class="btn btn-xs" onclick="showToast('Detail app dibuka (simulasi).')">Detail</button><button class="btn btn-xs btn-glass" onclick="showToast('Membuka file app di tab baru (simulasi).')">Buka File</button></div></article>
+        <article class="gapp-card glass"><div class="gapp-art" style="--a:#f7b9ff;--b:#8b3fd6"><span class="gtype">Design</span><span class="gicon">🎨</span></div><div class="gapp-body"><b>Palette Picker</b><p class="gdesc">Tool pemilih skema warna untuk divisi desain.</p><div class="gapp-meta"><span class="status draft">Draft</span></div><div class="gapp-roles"><span class="role-chip allowed">Divisi Game</span></div></div><div class="gapp-foot"><button class="btn btn-xs" onclick="showToast('Detail app dibuka (simulasi).')">Detail</button><button class="btn btn-xs btn-glass" onclick="showToast('Membuka file app di tab baru (simulasi).')">Buka File</button></div></article>
+        <article class="gapp-card glass" style="opacity:.85"><div class="gapp-art" style="--a:#dfe3ea;--b:#8b93a1"><span class="gtype">Utility</span><span class="gicon">❓</span></div><div class="gapp-body"><b>qr-generator.html</b><p class="gdesc">File terdeteksi, belum diberi metadata &amp; akses role.</p><div class="gapp-meta"><span class="tag-new">Belum Terdaftar</span></div><div class="gapp-roles"><span class="role-chip">Belum diatur</span></div></div><div class="gapp-foot"><button class="btn btn-xs btn-primary" onclick="showToast('Form register app dibuka (simulasi).')">＋ Register</button></div></article>
+      </div>
+    </section>
+
+    <!-- ROM LIBRARY -->
+    <section class="page" id="page-romlibrary">
+      <div class="page-head"><div><div class="crumb">Games &amp; Apps / ROM Library</div><h1>ROM Library</h1><p>Hubungkan folder ROM ke game emulator agar bisa dimainkan.</p></div><div class="actions"><button class="btn btn-primary" onclick="showToast('Pilih folder ROM (simulasi — perlu backend untuk akses direktori server).')">📁 Link Folder ROM</button></div></div>
+      <div class="note-callout glass" style="margin-bottom:16px"><span>⚠️</span><div><b>Perlu diperhatikan:</b> menghubungkan folder ROM nyata di server memerlukan backend (mis. Laravel) untuk membaca direktori dan memvalidasi hak cipta/lisensi ROM. Tampilan di bawah adalah simulasi struktur data yang nanti disambungkan.</div></div>
+      <div class="scanner-wrap">
+        <aside class="folder-tree glass">
+          <div class="folder-item active"><span>🎮</span>Semua Konsol<span class="fcount">3</span></div>
+          <div class="folder-item"><span>🟥</span>NES<span class="fcount">42</span></div>
+          <div class="folder-item"><span>🟦</span>GBA<span class="fcount">67</span></div>
+          <div class="folder-item"><span>🟩</span>SNES<span class="fcount">0</span></div>
+          <div class="folder-item" style="opacity:.55"><span>＋</span>Tambah konsol baru<span></span></div>
+        </aside>
+        <div class="scan-list glass">
+          <div class="rom-console" style="--a:#f28b82;--b:#c1443a;margin-bottom:10px"><span class="rc-ic">🟥</span><div><b>NES — Nintendo Entertainment System</b><span>Folder: /storage/roms/nes · format .nes</span></div><div class="rc-count"><strong>42</strong><small>ROM terdeteksi</small></div></div>
+          <div class="rom-console" style="--a:#8db7ff;--b:#375be4;margin-bottom:14px"><span class="rc-ic">🟦</span><div><b>GBA — Game Boy Advance</b><span>Folder: /storage/roms/gba · format .gba</span></div><div class="rc-count"><strong>67</strong><small>ROM terdeteksi</small></div></div>
+          <div class="panel-head"><div><h2 style="font-size:.85rem">Daftar file ROM (NES)</h2><small>Dummy data untuk preview struktur</small></div></div>
+          <div class="scan-row"><span class="scan-ic">🎮</span><div><b>super_adventure.nes</b><small>412 KB · terhubung ke "NES Player"</small></div><span class="tag-registered">Linked</span><button class="btn btn-xs btn-glass">Unlink</button></div>
+          <div class="scan-row"><span class="scan-ic">🎮</span><div><b>castle_quest.nes</b><small>380 KB · terhubung ke "NES Player"</small></div><span class="tag-registered">Linked</span><button class="btn btn-xs btn-glass">Unlink</button></div>
+          <div class="scan-row"><span class="scan-ic">🎮</span><div><b>racing_star.nes</b><small>295 KB · belum terhubung</small></div><span class="tag-new">Unlinked</span><button class="btn btn-xs btn-primary">Link ke game</button></div>
+          <div class="scan-row"><span class="scan-ic">🎮</span><div><b>puzzle_land.nes</b><small>201 KB · belum terhubung</small></div><span class="tag-new">Unlinked</span><button class="btn btn-xs btn-primary">Link ke game</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- USERS -->
+    <section class="page" id="page-users">
+      <div class="page-head"><div><div class="crumb">System / Users</div><h1>Users</h1><p>Kelola akun yang memiliki akses ke Control Center.</p></div><button class="btn btn-primary" onclick="showToast('Create user modal siap dikembangkan.')">＋ Invite User</button></div>
+      <div class="toolbar"><input class="field" placeholder="Search users..."><select class="field"><option>All roles</option><option>Super Admin</option><option>Administrator</option><option>Editor</option><option>Contributor</option><option>Viewer</option></select></div>
+      <div class="table-wrap glass"><table class="table"><thead><tr><th>User</th><th>Role</th><th>Status</th><th>Last Active</th><th>Created</th><th>Action</th></tr></thead><tbody><tr><td><b>Admin Smaga</b><br><span class="muted">admin@smaga.sch.id</span></td><td>Super Admin</td><td><span class="status published">Active</span></td><td>Now</td><td>01 Aug 2026</td><td>Edit</td></tr><tr><td><b>Raka</b><br><span class="muted">raka@smaga.sch.id</span></td><td>Editor</td><td><span class="status published">Active</span></td><td>20:42</td><td>12 Aug 2026</td><td>Edit</td></tr><tr><td><b>Nanda</b><br><span class="muted">nanda@smaga.sch.id</span></td><td>Contributor</td><td><span class="status published">Active</span></td><td>19:48</td><td>14 Aug 2026</td><td>Edit</td></tr><tr><td><b>Dimas</b><br><span class="muted">dimas@smaga.sch.id</span></td><td>Viewer</td><td><span class="status draft">Invited</span></td><td>Never</td><td>21 Sep 2026</td><td>Resend</td></tr></tbody></table></div>
+    </section>
+
+    <!-- ROLES -->
+    <section class="page" id="page-roles">
+      <div class="page-head"><div><div class="crumb">System / Roles & Permissions</div><h1>Roles & Permissions</h1><p>Fondasi RBAC untuk membatasi akses sesuai tanggung jawab.</p></div><button class="btn btn-primary" onclick="showToast('Create role siap dihubungkan ke Laravel.')">＋ Create Role</button></div>
+      <div class="permissions"><div class="role-card glass"><div><b>Super Admin</b><p>Full system access · users · roles · settings · ROM library</p></div><div class="role-actions"><button class="btn btn-xs">Edit</button><button class="btn btn-xs btn-danger">Protected</button></div></div><div class="role-card glass"><div><b>Administrator</b><p>Content + website + games management, no role deletion</p></div><div class="role-actions"><button class="btn btn-xs">Edit</button></div></div><div class="role-card glass"><div><b>Editor</b><p>Manage content, gallery, events, publish articles &amp; games</p></div><div class="role-actions"><button class="btn btn-xs">Edit</button></div></div><div class="role-card glass"><div><b>Contributor</b><p>Create drafts and upload media, no publish/delete</p></div><div class="role-actions"><button class="btn btn-xs">Edit</button></div></div><div class="role-card glass"><div><b>Divisi Game</b><p>Akses penuh Games, Apps &amp; ROM Library saja</p></div><div class="role-actions"><button class="btn btn-xs">Edit</button></div></div><div class="role-card glass"><div><b>Viewer</b><p>Read-only access to selected dashboard areas</p></div><div class="role-actions"><button class="btn btn-xs">Edit</button></div></div></div>
+      <div class="panel glass" style="margin-top:14px"><div class="panel-head"><div><h2>Permission matrix</h2><small>Klik ✓ / — untuk toggle akses (simulasi, belum tersambung backend)</small></div><button class="btn btn-xs btn-glass" onclick="showToast('Matrix direset ke default (simulasi).')">Reset default</button></div><div class="table-wrap"><table class="table matrix" id="permMatrix"><thead><tr><th>Permission</th><th>Super</th><th>Admin</th><th>Editor</th><th>Contributor</th><th>Divisi Game</th><th>Viewer</th></tr></thead><tbody>
+        <tr><td>Dashboard</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td></tr>
+        <tr><td>Articles CRUD</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="dash">—</td><td class="dash">—</td></tr>
+        <tr><td>Publish content</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
+        <tr><td>Delete media</td><td class="tick">✓</td><td class="tick">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
+        <tr><td><b>Games — view</b></td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="dash">—</td></tr>
+        <tr><td><b>Games — register/edit</b></td><td class="tick">✓</td><td class="tick">✓</td><td class="tick">✓</td><td class="dash">—</td><td class="tick">✓</td><td class="dash">—</td></tr>
+        <tr><td><b>Apps — manage</b></td><td class="tick">✓</td><td class="tick">✓</td><td class="dash">—</td><td class="dash">—</td><td class="tick">✓</td><td class="dash">—</td></tr>
+        <tr><td><b>ROM Library — link/unlink</b></td><td class="tick">✓</td><td class="tick">✓</td><td class="dash">—</td><td class="dash">—</td><td class="tick">✓</td><td class="dash">—</td></tr>
+        <tr><td>User management</td><td class="tick">✓</td><td class="tick">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
+        <tr><td>Roles</td><td class="tick">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
+        <tr><td>System settings</td><td class="tick">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
+      </tbody></table></div><p class="matrix-note">Baris <b>Games/Apps/ROM</b> adalah modul baru pada v2 — otomatis mengontrol tampilan sidebar saat menggunakan "Preview sebagai role" di topbar.</p></div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="page" id="page-settings">
+      <div class="page-head"><div><div class="crumb">System / Settings</div><h1>Settings</h1><p>Atur identitas, tampilan, media, SEO, dan perilaku sistem.</p></div><button class="btn btn-primary" onclick="showToast('Settings saved secara simulasi.')">Save Settings</button></div>
+      <div class="settings-layout"><aside class="settings-menu glass">
+        <button class="active" data-pane="general">General</button>
+        <button data-pane="appearance">Appearance</button>
+        <button data-pane="homepage">Homepage</button>
+        <button data-pane="social">Social Media</button>
+        <button data-pane="seo">SEO</button>
+        <button data-pane="media">Media</button>
+        <button data-pane="notifications">Notifications</button>
+        <button data-pane="security">Security</button>
+      </aside>
+
+      <article class="settings-pane glass settings-content active" id="pane-general"><div class="panel-head"><div><h2>General settings</h2><small>Identitas utama Administrator Smaga</small></div></div><div class="setting-grid"><div class="form-block"><label>Club Name</label><input value="Administrator Smaga"></div><div class="form-block"><label>School Name</label><input value="SMAGA"></div><div class="form-block"><label>Contact Email</label><input value="administrator@smaga.sch.id"></div><div class="form-block"><label>Timezone</label><select><option>Asia/Jakarta (WIB)</option></select></div><div class="form-block full"><label>Address</label><input value="Alamat sekolah dapat diisi di sini."></div><div class="form-block"><label>Logo</label><button class="btn btn-glass" onclick="openUpload()">Choose logo</button></div><div class="form-block"><label>Favicon</label><button class="btn btn-glass" onclick="openUpload()">Choose favicon</button></div></div><div class="switch-row" style="margin-top:16px"><div><b style="font-size:.72rem">Enable aero motion</b><div class="muted" style="font-size:.61rem">Mesh gradient + bubbles</div></div><div class="switch on"><i></i></div></div><div class="danger-zone" style="margin-top:16px"><b style="font-size:.74rem;color:var(--danger)">Danger zone</b><p class="muted" style="font-size:.65rem;margin:4px 0 9px">Reset prototype settings ke default.</p><button class="btn btn-danger btn-xs" onclick="showToast('Reset tidak dijalankan pada prototype.')">Reset</button></div></article>
+
+      <article class="settings-pane glass settings-content" id="pane-appearance"><div class="panel-head"><div><h2>Appearance</h2><small>Tema, warna, dan tipografi Control Center</small></div></div><div class="setting-grid"><div class="form-block"><label>Default theme</label><select><option>Light</option><option>Dark</option><option>Follow system</option></select></div><div class="form-block"><label>Accent color</label><select><option>Sky Blue (default)</option><option>Ocean</option><option>Mint</option><option>Lime</option></select></div><div class="form-block"><label>Font</label><select><option>Plus Jakarta Sans (default)</option><option>Inter</option><option>Poppins</option></select></div><div class="form-block"><label>Sidebar density</label><select><option>Comfortable</option><option>Compact</option></select></div></div><div class="switch-row" style="margin-top:6px"><div><b style="font-size:.72rem">Rounded corners</b><div class="muted" style="font-size:.61rem">Gunakan radius besar pada kartu &amp; tombol</div></div><div class="switch on"><i></i></div></div><div class="switch-row"><div><b style="font-size:.72rem">Reduce motion</b><div class="muted" style="font-size:.61rem">Matikan animasi bubble &amp; transisi halaman</div></div><div class="switch"><i></i></div></div></article>
+
+      <article class="settings-pane glass settings-content" id="pane-homepage"><div class="panel-head"><div><h2>Homepage</h2><small>Kontrol section apa saja yang tampil di website publik</small></div></div><div class="switch-row"><div><b style="font-size:.72rem">Hero</b><div class="muted" style="font-size:.61rem">Section pembuka dengan headline utama</div></div><div class="switch on"><i></i></div></div><div class="switch-row"><div><b style="font-size:.72rem">About / Profil</b></div><div class="switch on"><i></i></div></div><div class="switch-row"><div><b style="font-size:.72rem">Divisions</b></div><div class="switch on"><i></i></div></div><div class="switch-row"><div><b style="font-size:.72rem">Featured Works</b></div><div class="switch on"><i></i></div></div><div class="switch-row"><div><b style="font-size:.72rem">Activities / Events</b></div><div class="switch on"><i></i></div></div><div class="switch-row"><div><b style="font-size:.72rem">Games &amp; Apps Showcase</b><div class="muted" style="font-size:.61rem">Tampilkan katalog game publik di homepage</div></div><div class="switch"><i></i></div></div><div class="switch-row" style="border-bottom:0"><div><b style="font-size:.72rem">Join CTA</b></div><div class="switch on"><i></i></div></div><p class="matrix-note">Urutan section diatur lewat <button class="row-link" onclick="go('builder')" style="padding:0">Page Builder →</button></p></article>
+
+      <article class="settings-pane glass settings-content" id="pane-social"><div class="panel-head"><div><h2>Social Media</h2><small>Tautan sosial yang tampil di footer &amp; kontak</small></div></div><div class="setting-grid"><div class="form-block"><label>Instagram</label><input value="@administrator.smaga"></div><div class="form-block"><label>YouTube</label><input value="Administrator Smaga"></div><div class="form-block"><label>TikTok</label><input value="@administrator.smaga"></div><div class="form-block"><label>GitHub (Programming)</label><input value="github.com/administrator-smaga"></div><div class="form-block"><label>WhatsApp Contact</label><input value="+62 812-xxxx-xxxx"></div><div class="form-block"><label>Email Publik</label><input value="halo@smaga.sch.id"></div></div><div class="switch-row" style="margin-top:6px"><div><b style="font-size:.72rem">Tampilkan ikon sosial di header publik</b></div><div class="switch on"><i></i></div></div></article>
+
+      <article class="settings-pane glass settings-content" id="pane-seo"><div class="panel-head"><div><h2>SEO</h2><small>Meta default untuk mesin pencari &amp; share preview</small></div></div><div class="setting-grid"><div class="form-block full"><label>Meta Title default</label><input value="Administrator Smaga — Jurnalistik, Desain Grafis, Programming"></div><div class="form-block full"><label>Meta Description default</label><textarea>Ekstrakurikuler Administrator Smaga menghubungkan tiga divisi: Jurnalistik, Desain Grafis, dan Programming untuk membangun karya digital sekolah.</textarea></div><div class="form-block"><label>OG Image (Share Preview)</label><button class="btn btn-glass" onclick="openUpload()">Choose image</button></div><div class="form-block"><label>Robots</label><select><option>Index, Follow (default)</option><option>Noindex</option></select></div><div class="form-block full"><label>Sitemap</label><input value="https://smaga.sch.id/sitemap.xml" readonly></div></div><div class="switch-row"><div><b style="font-size:.72rem">Auto-generate meta dari excerpt artikel</b></div><div class="switch on"><i></i></div></div></article>
+
+      <article class="settings-pane glass settings-content" id="pane-media"><div class="panel-head"><div><h2>Media</h2><small>Batas unggah dan format yang diizinkan</small></div></div><div class="setting-grid"><div class="form-block"><label>Max upload size (per file)</label><select><option>10 MB</option><option>25 MB</option><option>50 MB</option></select></div><div class="form-block"><label>Max ROM file size</label><select><option>5 MB</option><option>20 MB</option><option>50 MB</option></select></div><div class="form-block full"><label>Format gambar diizinkan</label><input value="jpg, jpeg, png, webp, gif"></div><div class="form-block full"><label>Format ROM diizinkan</label><input value="nes, gba, smc, sfc, gb, gbc"></div></div><div class="insight" style="margin-top:8px"><b>Storage usage</b><p>Media: 2.4 GB · ROM Library: 640 MB · Total kuota 10 GB</p></div><div class="switch-row"><div><b style="font-size:.72rem">Kompres gambar otomatis</b></div><div class="switch on"><i></i></div></div></article>
+
+      <article class="settings-pane glass settings-content" id="pane-notifications"><div class="panel-head"><div><h2>Notifications</h2><small>Pilih event yang mengirim notifikasi</small></div></div><div class="switch-row"><div><b style="font-size:.72rem">Artikel baru menunggu review</b></div><div class="switch on"><i></i></div></div><div class="switch-row"><div><b style="font-size:.72rem">Upload gallery/media baru</b></div><div class="switch on"><i></i></div></div><div class="switch-row"><div><b style="font-size:.72rem">Game/App baru terdeteksi di folder</b><div class="muted" style="font-size:.61rem">Notifikasi saat file HTML baru ditemukan hasil scan</div></div><div class="switch on"><i></i></div></div><div class="switch-row"><div><b style="font-size:.72rem">Login dari perangkat baru</b></div><div class="switch on"><i></i></div></div><div class="switch-row" style="border-bottom:0"><div><b style="font-size:.72rem">Ringkasan mingguan via email</b></div><div class="switch"><i></i></div></div></article>
+
+      <article class="settings-pane glass settings-content" id="pane-security"><div class="panel-head"><div><h2>Security</h2><small>Perlindungan akses ke Control Center &amp; area sensitif</small></div></div><div class="switch-row"><div><b style="font-size:.72rem">Wajibkan 2FA untuk Super Admin &amp; Administrator</b></div><div class="switch on"><i></i></div></div><div class="switch-row"><div><b style="font-size:.72rem">Batasi akses ROM Library dengan IP allowlist</b><div class="muted" style="font-size:.61rem">Hanya jaringan sekolah yang bisa kelola ROM</div></div><div class="switch"><i></i></div></div><div class="switch-row"><div><b style="font-size:.72rem">Auto logout setelah tidak aktif</b></div><div class="switch on"><i></i></div></div><div class="setting-grid" style="margin-top:10px"><div class="form-block"><label>Session timeout</label><select><option>15 menit</option><option>30 menit</option><option>1 jam</option></select></div><div class="form-block"><label>Percobaan login maksimal</label><select><option>5x</option><option>10x</option></select></div></div><div class="panel-head" style="margin-top:16px"><div><h2 style="font-size:.85rem">Sesi aktif</h2></div></div><div class="insights"><div class="insight"><b>Chrome · Windows — Sekarang</b><p>192.168.1.12 · sesi ini</p></div><div class="insight"><b>Chrome · Android — 2 jam lalu</b><p>192.168.1.28</p></div></div><div class="danger-zone" style="margin-top:14px"><b style="font-size:.74rem;color:var(--danger)">Danger zone</b><p class="muted" style="font-size:.65rem;margin:4px 0 9px">Cabut semua sesi aktif di semua perangkat.</p><button class="btn btn-danger btn-xs" onclick="showToast('Semua sesi dicabut (simulasi).')">Revoke all sessions</button></div></article>
+      </div>
+    </section>
+
+    <!-- LOGS -->
+    <section class="page" id="page-logs">
+      <div class="page-head"><div><div class="crumb">System / Activity Logs</div><h1>Activity Logs</h1><p>Audit trail untuk perubahan konten dan konfigurasi.</p></div><button class="btn btn-glass">Export CSV</button></div>
+      <div class="toolbar"><input class="field" placeholder="Search action..." oninput="filterRows(this,'.log-row')"><select class="field"><option>All users</option><option>Admin Smaga</option><option>Raka</option><option>Nanda</option></select><select class="field"><option>All actions</option><option>Update</option><option>Upload</option><option>Publish</option><option>Login</option></select></div>
+      <div class="table-wrap glass"><table class="table"><thead><tr><th>Time</th><th>User</th><th>Action</th><th>Target</th><th>IP</th><th>Result</th></tr></thead><tbody><tr class="log-row"><td>22 Sep · 20:44</td><td>Admin Smaga</td><td>Update</td><td>Homepage Hero</td><td>192.168.1.12</td><td><span class="status published">Success</span></td></tr><tr class="log-row"><td>22 Sep · 20:41</td><td>Raka</td><td>Upload</td><td>Gallery / 14 images</td><td>192.168.1.28</td><td><span class="status published">Success</span></td></tr><tr class="log-row"><td>22 Sep · 20:37</td><td>Nanda</td><td>Create</td><td>Article #26</td><td>192.168.1.34</td><td><span class="status published">Success</span></td></tr><tr class="log-row"><td>22 Sep · 20:20</td><td>Admin Smaga</td><td>Update</td><td>Appearance / Theme</td><td>192.168.1.12</td><td><span class="status published">Success</span></td></tr><tr class="log-row"><td>22 Sep · 19:55</td><td>Dimas</td><td>Login</td><td>Control Center</td><td>192.168.1.50</td><td><span class="status published">Success</span></td></tr></tbody></table></div>
+    </section>
+  </main>
+</section>
+</div>
+
+<div class="modal" id="uploadModal" aria-hidden="true"><div class="modal-card glass"><div class="modal-head"><h2>Upload documentation</h2><button class="close" onclick="closeUpload()">×</button></div><div class="dropzone" id="dropzone"><b>Drag & drop photos here</b><span>or click to browse · JPG · PNG · WEBP</span><input type="file" id="fileInput" hidden multiple accept="image/*"></div><div class="upload-list"><div class="upload-thumb">IMG_01</div><div class="upload-thumb" style="background:linear-gradient(145deg,#8ffff0,#00a99d)">IMG_02</div><div class="upload-thumb" style="background:linear-gradient(145deg,#b9ff55,#38B000)">IMG_03</div><div class="upload-thumb" style="background:linear-gradient(145deg,#8db7ff,#375be4)">IMG_04</div></div><div class="setting-grid" style="margin-top:14px"><div class="form-block"><label>Album</label><select><option>School Coverage</option><option>Design Sprint</option><option>Tech Lab</option></select></div><div class="form-block"><label>Category</label><select><option>Jurnalistik</option><option>Desain Grafis</option><option>Programming</option><option>Kolaborasi</option></select></div></div><div class="actions" style="margin-top:16px;justify-content:flex-end"><button class="btn btn-glass" onclick="closeUpload()">Cancel</button><button class="btn btn-primary" onclick="closeUpload();showToast('Upload selesai secara simulasi.')">Upload 4 files</button></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const state={page:'dashboard'};
+function getPage(){return location.hash.replace('#/','')||'dashboard'}
+function go(page){
+  if(typeof pageAllowedFor==='function' && !pageAllowedFor(currentRole,page)){
+    showToast('Role "'+ROLES[currentRole].label+'" tidak punya akses ke halaman ini.');
+    return;
+  }
+  state.page=page;
+  location.hash='/'+page;
+  renderPage(page);
+  document.getElementById('sidebar').classList.remove('open');
+}
+function renderPage(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+page));
+  document.querySelectorAll('.side-item[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
+  const title=document.querySelector('#page-'+page+' h1')?.textContent||'Dashboard';
+  document.title=title+' — Administrator Control Center';
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(page==='editor') setTimeout(initHugeRTE,80);
+}
+window.addEventListener('hashchange',()=>renderPage(getPage()));
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>t.classList.remove('show'),2600)}
+document.querySelectorAll('.side-item[data-page]').forEach(btn=>btn.addEventListener('click',()=>go(btn.dataset.page)));
+
+document.getElementById('themeBtn').addEventListener('click',()=>{
+  const root=document.documentElement; const dark=root.dataset.theme==='dark'; root.dataset.theme=dark?'light':'dark'; localStorage.setItem('adm-theme',root.dataset.theme);
+  document.querySelector('.moon').style.display=dark?'block':'none';document.querySelector('.sun').style.display=dark?'none':'block';
+});
+const saved=localStorage.getItem('adm-theme');if(saved){document.documentElement.dataset.theme=saved;document.querySelector('.moon').style.display=saved==='dark'?'none':'block';document.querySelector('.sun').style.display=saved==='dark'?'block':'none'}
+
+document.getElementById('mobileMenu').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
+document.getElementById('notifyBtn').addEventListener('click',()=>showToast('Tidak ada notifikasi baru.'));
+
+/* ===== Role Preview Engine ===== */
+const ROLES={
+  super:{label:'Super Admin',icon:'👑',allow:'*'},
+  admin:{label:'Administrator',icon:'🛡',deny:['roles','settings','users']},
+  editor:{label:'Editor',icon:'✎',deny:['roles','settings','users','logs','divisions']},
+  contributor:{label:'Contributor',icon:'✏️',deny:['roles','settings','users','logs','divisions','navigation','builder','romlibrary','apps']},
+  gamesdiv:{label:'Divisi Game',icon:'🎮',allowOnly:['dashboard','games','apps','romlibrary']},
+  viewer:{label:'Viewer',icon:'👁',deny:['roles','settings','users','logs','editor','builder','navigation','romlibrary']}
+};
+let currentRole='super';
+
+function pageAllowedFor(role,page){
+  const r=ROLES[role]; if(!r) return true;
+  if(r.allowOnly) return r.allowOnly.includes(page);
+  if(r.deny) return !r.deny.includes(page);
+  return true;
+}
+function setRolePreview(role){
+  currentRole=role; const r=ROLES[role];
+  document.getElementById('rolePreviewLabel').textContent=r.icon+' '+r.label;
+  document.getElementById('roleBannerName').textContent=r.label;
+  document.getElementById('roleBanner').classList.toggle('show',role!=='super');
+  document.querySelectorAll('.role-preview-menu button').forEach(b=>b.classList.toggle('active',b.dataset.role===role));
+  document.querySelectorAll('.side-item[data-page]').forEach(btn=>{
+    const ok=pageAllowedFor(role,btn.dataset.page);
+    btn.classList.toggle('locked',!ok);
+    let lock=btn.querySelector('.lock-ic');
+    if(!ok && !lock){
+      btn.insertAdjacentHTML('beforeend','<svg class="icon lock-ic" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>');
+    } else if(ok && lock){ lock.remove(); }
+  });
+  // jika sedang di halaman yang sekarang terkunci, lempar balik ke dashboard
+  if(!pageAllowedFor(role,getPage())){ showToast('Halaman ini tidak tersedia untuk role '+r.label+'.'); go('dashboard'); }
+  document.getElementById('rolePreviewMenu').classList.remove('open');
+}
+document.getElementById('rolePreviewBtn').addEventListener('click',e=>{e.stopPropagation();document.getElementById('rolePreviewMenu').classList.toggle('open')});
+document.querySelectorAll('.role-preview-menu button').forEach(b=>b.addEventListener('click',()=>setRolePreview(b.dataset.role)));
+document.addEventListener('click',e=>{if(!document.getElementById('rolePreviewWrap').contains(e.target))document.getElementById('rolePreviewMenu').classList.remove('open')});
+setRolePreview('super');
+
+/* ===== Settings tab switcher ===== */
+document.querySelectorAll('.settings-menu button[data-pane]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.settings-menu button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.settings-content').forEach(p=>p.classList.toggle('active',p.id==='pane-'+btn.dataset.pane));
+    showToast(btn.textContent+' panel dipilih.');
+  });
+});
+
+/* ===== Permission matrix interactive toggle ===== */
+document.querySelectorAll('#permMatrix td.tick, #permMatrix td.dash').forEach(cell=>{
+  cell.addEventListener('click',()=>{
+    const isTick=cell.classList.contains('tick');
+    cell.classList.toggle('tick',!isTick);
+    cell.classList.toggle('dash',isTick);
+    cell.textContent=isTick?'—':'✓';
+    showToast('Permission diperbarui (simulasi, belum tersimpan ke server).');
+  });
+});
+
+/* ===== Folder tree (ROM Library) selection ===== */
+document.querySelectorAll('.folder-item').forEach(item=>{
+  item.addEventListener('click',()=>{
+    document.querySelectorAll('.folder-item').forEach(i=>i.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+
+/* Perbaikan HugeRTE untuk Local Upload */
+function initHugeRTE(){
+  if(!window.hugerte) return;
+  
+  if(hugerte.get('articleEditor')) {
+    hugerte.remove('#articleEditor');
+  }
+
+  hugerte.init({
+    selector:'#articleEditor',height:520,menubar:'file edit view insert format tools table help',
+    plugins:'advlist anchor autolink charmap code codesample fullscreen help image link lists media preview searchreplace table visualblocks wordcount',
+    toolbar:'undo redo | blocks | bold italic underline | forecolor backcolor | alignleft aligncenter alignright | bullist numlist | link image media table | removeformat | code fullscreen',
+    toolbar_mode:'sliding',promotion:false,statusbar:true,branding:false,
+    content_style:'body{font-family:Plus Jakarta Sans,Arial,sans-serif;font-size:15px;color:#163b50;line-height:1.75;padding:18px;background:#fff} :root[data-theme=dark] body{background:#041927;color:#ECFAFF;} h2,h3{color:#062B44} img{max-width:100%;height:auto}',
+    
+    file_picker_callback: function (callback, value, meta) {
+      const input = document.createElement('input');
+      input.setAttribute('type', 'file');
+      
+      if (meta.filetype === 'image') {
+        input.setAttribute('accept', 'image/*');
+      } else if (meta.filetype === 'media') {
+        input.setAttribute('accept', 'video/*,audio/*');
+      } else {
+        input.setAttribute('accept', '*/*');
+      }
+
+      input.onchange = function () {
+        const file = this.files[0];
+        const blobUri = URL.createObjectURL(file);
+        callback(blobUri, { title: file.name });
+      };
+
+      input.click();
+    },
+
+    images_upload_handler: function (blobInfo, progress) {
+      return new Promise((resolve, reject) => {
+        resolve('data:' + blobInfo.blob().type + ';base64,' + blobInfo.base64());
+      });
+    },
+
+    setup(editor){editor.on('change',()=>{window.__articleDirty=true})}
+  });
+}
+
+function openUpload(){document.getElementById('uploadModal').classList.add('open');document.getElementById('uploadModal').setAttribute('aria-hidden','false')}
+function closeUpload(){document.getElementById('uploadModal').classList.remove('open');document.getElementById('uploadModal').setAttribute('aria-hidden','true')}
+document.getElementById('dropzone').addEventListener('click',()=>document.getElementById('fileInput').click());
+document.getElementById('fileInput').addEventListener('change',e=>{showToast(`${e.target.files.length||0} file dipilih (simulasi).`)})
+
+/* Menutup Modal jika diklik di area hitam luar modal */
+document.getElementById('uploadModal').addEventListener('click', e => {
+  if (e.target.id === 'uploadModal') closeUpload();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeUpload();document.getElementById('sidebar').classList.remove('open')}});
+
+document.querySelectorAll('.switch').forEach(s=>s.addEventListener('click',()=>s.classList.toggle('on')));
+document.querySelectorAll('.settings-tab').forEach(s=>s.addEventListener('click',()=>{document.querySelectorAll('.settings-tab').forEach(x=>x.classList.remove('active'));s.classList.add('active');showToast(`${s.textContent} panel dipilih.`)}));
+document.querySelectorAll('.block').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.block').forEach(x=>x.classList.remove('active'));b.classList.add('active')}));
+
+function filterRows(input,selector){const q=input.value.toLowerCase();document.querySelectorAll(selector).forEach(row=>row.style.display=row.innerText.toLowerCase().includes(q)?'':'none')}
+function filterCards(input,selector){const q=input.value.toLowerCase();document.querySelectorAll(selector).forEach(card=>card.style.display=card.innerText.toLowerCase().includes(q)?'':'none')}
+function filterGallery(value){document.querySelectorAll('#galleryGrid .media-card').forEach(card=>card.style.display=(value==='all'||card.dataset.category===value)?'':'none')}
+
+document.getElementById('globalSearch').addEventListener('keydown',e=>{if(e.key==='Enter'){const q=e.target.value.trim();if(!q)return;showToast('Global search prototype: '+q);}});
+
+(function(){
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;const field=document.getElementById('bubbles');
+  if(!reduce){for(let i=0;i<16;i++){const b=document.createElement('span');b.className='bubble';b.style.setProperty('--s',(10+Math.random()*34)+'px');b.style.setProperty('--x',(Math.random()*100)+'%');b.style.setProperty('--d',(17+Math.random()*18)+'s');b.style.setProperty('--delay',(-Math.random()*28)+'s');b.style.setProperty('--dx',(Math.random()*120-60)+'px');field.appendChild(b)}}
+  renderPage(getPage());
+  if(getPage()==='editor') initHugeRTE();
+})();
+</script>
+</body>
+</html>
