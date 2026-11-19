@@ -1,0 +1,4571 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>PAPUA COOKING ADVENTURE — HD Culinary Edition</title>
+  <style>
+    :root {
+      --bg-wood-dark: #26130a;
+      --bg-wood-mid: #4a2816;
+      --bg-wood-light: #7c4726;
+      --accent-gold: #f59e0b;
+      --accent-turmeric: #eab308;
+      --accent-terracotta: #c2410c;
+      --accent-leaf: #15803d;
+      --accent-leaf-light: #22c55e;
+      --cream-paper: #fef9ef;
+      --text-dark: #29170d;
+      --text-muted: #6b4c3b;
+      --shadow-soft: 0 14px 32px rgba(15, 6, 2, 0.42);
+      --shadow-card: 0 6px 18px rgba(41, 23, 13, 0.2);
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      background: radial-gradient(circle at top, #5c3720 0%, #1a0c05 100%);
+      color: var(--text-dark);
+    }
+
+    /* ==================== SCREEN SYSTEM ==================== */
+    .screen {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100dvh;
+      display: none;
+      flex-direction: column;
+      z-index: 10;
+      animation: fadeIn 0.32s ease;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.99); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.6); }
+      50% { box-shadow: 0 0 0 12px rgba(245, 158, 11, 0); }
+    }
+
+    /* Traditional Papuan Woodcarving Geometric Border */
+    .papua-border-strip {
+      height: 14px;
+      width: 100%;
+      background-color: #2d160b;
+      background-image: repeating-linear-gradient(
+        90deg,
+        #d97706 0px, #d97706 10px,
+        #fef3c7 10px, #fef3c7 14px,
+        #9a3412 14px, #9a3412 24px,
+        #1c0d06 24px, #1c0d06 28px
+      );
+      border-top: 2px solid #92400e;
+      border-bottom: 2px solid #92400e;
+      flex-shrink: 0;
+    }
+
+    /* Buttons */
+    .btn {
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 11px 18px;
+      font-size: 0.96rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: transform 0.12s ease, filter 0.12s ease;
+      min-height: 44px;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.35);
+    }
+
+    .btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.28);
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+    }
+
+    .btn-green {
+      background: linear-gradient(180deg, #22c55e 0%, #15803d 100%);
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(180deg, #fffbeb 0%, #fde68a 100%);
+      color: #451a03;
+      border: 2px solid #d97706;
+    }
+
+    .btn-danger {
+      background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%);
+      color: #fff;
+    }
+
+    .btn-sm {
+      padding: 6px 11px;
+      font-size: 0.82rem;
+      min-height: 35px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* ==================== 1. MAIN MENU SCREEN ==================== */
+    #screen-menu {
+      background:
+        radial-gradient(circle at 75% 22%, rgba(251, 191, 36, 0.28), transparent 48%),
+        linear-gradient(160deg, #422413 0%, #241209 65%, #160a04 100%);
+      color: var(--cream-paper);
+      justify-content: space-between;
+      overflow-y: auto;
+    }
+
+    .menu-container {
+      flex: 1;
+      max-width: 1120px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px 20px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .menu-hero {
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+
+    .badge-papua {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245, 158, 11, 0.22);
+      border: 1px solid rgba(251, 191, 36, 0.55);
+      color: #fde68a;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      width: fit-content;
+    }
+
+    .game-logo-title {
+      font-size: clamp(2rem, 4.4vw, 3.35rem);
+      font-weight: 900;
+      line-height: 1.06;
+      background: linear-gradient(180deg, #fffbeb 10%, #fbbf24 58%, #d97706 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+    }
+
+    .game-tagline {
+      font-size: clamp(1.05rem, 2vw, 1.35rem);
+      color: #fde68a;
+      font-weight: 600;
+      font-style: italic;
+    }
+
+    .menu-desc {
+      color: #ebd9c8;
+      font-size: 0.94rem;
+      line-height: 1.55;
+      max-width: 520px;
+    }
+
+    .menu-buttons-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+      max-width: 500px;
+    }
+
+    .menu-buttons-grid .btn-start-main {
+      grid-column: span 2;
+      font-size: 1.15rem;
+      padding: 14px 22px;
+      animation: pulseGlow 2.4s infinite;
+    }
+
+    .menu-visual-card {
+      background: linear-gradient(180deg, rgba(255, 251, 235, 0.14) 0%, rgba(36, 18, 9, 0.78) 100%);
+      border: 2px solid rgba(251, 191, 36, 0.45);
+      border-radius: 24px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .menu-showcase-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .menu-mama-box {
+      width: 140px;
+      animation: floatSlow 3.5s ease-in-out infinite;
+    }
+
+    .menu-dish-box {
+      flex: 1;
+      max-width: 245px;
+    }
+
+    .mama-welcome-bubble {
+      background: var(--cream-paper);
+      color: var(--text-dark);
+      padding: 11px 14px;
+      border-radius: 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      line-height: 1.42;
+      box-shadow: var(--shadow-card);
+      border-left: 5px solid var(--accent-gold);
+      width: 100%;
+    }
+
+    /* ==================== 2. GAMEPLAY SCREEN ==================== */
+    #screen-game {
+      background: #2b180e;
+      justify-content: space-between;
+    }
+
+    .game-hud {
+      background: linear-gradient(180deg, #472715 0%, #29150a 100%);
+      color: #fffbeb;
+      padding: 7px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border-bottom: 2px solid #78350f;
+      z-index: 20;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    }
+
+    .hud-left, .hud-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hud-pill {
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(251, 191, 36, 0.45);
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .stage-progress-bar-wrap {
+      flex: 1;
+      min-width: 0;
+      max-width: 350px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .stage-progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.73rem;
+      color: #fde68a;
+      font-weight: 700;
+      gap: 4px;
+    }
+
+    .stage-progress-label span:first-child {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .stage-progress-track {
+      width: 100%;
+      height: 7px;
+      background: rgba(255,255,255,0.16);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .stage-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f59e0b, #22c55e);
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .game-workspace {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 275px 1fr;
+      overflow: hidden;
+      position: relative;
+      min-height: 0;
+    }
+
+    .mama-side-panel {
+      background: linear-gradient(180deg, #4b2b18 0%, #311a0e 100%);
+      border-right: 2px solid #78350f;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 9px;
+      z-index: 15;
+      overflow-y: auto;
+    }
+
+    .mama-card {
+      background: rgba(255, 251, 235, 0.08);
+      border: 1px solid rgba(251, 191, 36, 0.28);
+      border-radius: 16px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mama-avatar-wrap {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fde68a 0%, #d97706 100%);
+      padding: 4px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .mama-avatar-wrap.speaking {
+      animation: mamaTalkBounce 0.42s ease infinite alternate;
+    }
+
+    @keyframes mamaTalkBounce {
+      from { transform: scale(1) translateY(0); }
+      to { transform: scale(1.04) translateY(-3px); }
+    }
+
+    .mama-name-tag {
+      background: #d97706;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 3px 12px;
+      border-radius: 999px;
+    }
+
+    .mama-dialogue-box {
+      background: var(--cream-paper);
+      color: var(--text-dark);
+      border-radius: 12px;
+      padding: 9px 11px;
+      font-size: 0.87rem;
+      line-height: 1.38;
+      font-weight: 600;
+      box-shadow: var(--shadow-card);
+    }
+
+    .instruction-card {
+      background: #fffbeb;
+      border: 2px solid #f59e0b;
+      border-radius: 12px;
+      padding: 8px 11px;
+      color: #451a03;
+    }
+
+    .instruction-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #b45309;
+      font-weight: 800;
+      margin-bottom: 3px;
+    }
+
+    .instruction-text {
+      font-size: 0.84rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .step-checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.77rem;
+      color: #fef3c7;
+    }
+
+    .step-check-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 8px;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.24);
+      opacity: 0.65;
+    }
+
+    .step-check-item.active {
+      opacity: 1;
+      background: rgba(245, 158, 11, 0.28);
+      border: 1px solid rgba(251, 191, 36, 0.55);
+      font-weight: 700;
+    }
+
+    .step-check-item.done {
+      opacity: 0.95;
+      color: #86efac;
+    }
+
+    /* 3D Hybrid First-Person HD Kitchen Stage */
+    .kitchen-stage-area {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 260px;
+      overflow: hidden;
+      perspective: 1000px;
+      background:
+        radial-gradient(circle at 75% 18%, rgba(254, 240, 138, 0.22), transparent 50%),
+        linear-gradient(180deg, #6b4125 0%, #482815 48%, #2e180b 100%);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .kitchen-3d-backdrop {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .kitchen-3d-backdrop.camera-closeup {
+      transform: scale(1.06) translateY(-8px);
+    }
+
+    .kitchen-wall-trim {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 12px;
+      background: repeating-linear-gradient(
+        90deg,
+        #d97706 0px, #d97706 14px,
+        #fef3c7 14px, #fef3c7 18px,
+        #7c2d12 18px, #7c2d12 32px
+      );
+      opacity: 0.9;
+    }
+
+    .kitchen-window {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 126px;
+      height: 80px;
+      background: linear-gradient(180deg, #bae6fd 0%, #fef08a 100%);
+      border: 5px solid #451a03;
+      border-radius: 10px;
+      box-shadow: inset 0 0 22px rgba(255,255,255,0.85), 0 8px 18px rgba(0,0,0,0.35);
+      opacity: 0.78;
+    }
+
+    .kitchen-window::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, transparent 48%, #451a03 48%, #451a03 52%, transparent 52%),
+        linear-gradient(180deg, transparent 48%, #451a03 48%, #451a03 52%, transparent 52%);
+    }
+
+    .kitchen-counter-3d {
+      position: absolute;
+      bottom: 0;
+      left: -6%;
+      width: 112%;
+      height: 67%;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          rgba(0,0,0,0.08) 0px,
+          rgba(0,0,0,0.08) 2px,
+          transparent 2px,
+          transparent 76px
+        ),
+        radial-gradient(ellipse at 50% 25%, rgba(255, 224, 178, 0.22), transparent 65%),
+        linear-gradient(180deg, #b87342 0%, #874e26 48%, #542d12 100%);
+      transform: rotateX(22deg);
+      transform-origin: bottom center;
+      border-top: 8px solid #d99664;
+      box-shadow: 0 -14px 36px rgba(0,0,0,0.45);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    #cooking-canvas {
+      position: relative;
+      z-index: 5;
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+      cursor: grab;
+    }
+
+    #cooking-canvas:active {
+      cursor: grabbing;
+    }
+
+    .canvas-overlay-ui {
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 10px 12px;
+    }
+
+    .top-action-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .meter-card {
+      background: rgba(34, 17, 8, 0.92);
+      border: 1.5px solid rgba(251, 191, 36, 0.6);
+      color: #fffbeb;
+      padding: 6px 11px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+      pointer-events: auto;
+    }
+
+    .meter-bar-outer {
+      width: 96px;
+      height: 10px;
+      background: rgba(255,255,255,0.18);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .meter-bar-inner {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f59e0b, #22c55e);
+      transition: width 0.14s ease;
+    }
+
+    .retry-stage-btn {
+      pointer-events: auto;
+      background: rgba(69, 26, 3, 0.9);
+      color: #fde68a;
+      border: 1.5px solid #f59e0b;
+      border-radius: 10px;
+      padding: 5px 10px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .feedback-toast {
+      align-self: center;
+      background: rgba(21, 128, 61, 0.96);
+      color: #fff;
+      padding: 7px 16px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.88rem;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.38);
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      text-align: center;
+      max-width: 92%;
+    }
+
+    .feedback-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .feedback-toast.warn {
+      background: rgba(194, 65, 12, 0.96);
+    }
+
+    .bottom-interactive-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      pointer-events: none;
+      padding-bottom: 4px;
+    }
+
+    .hold-heat-btn {
+      pointer-events: auto;
+      background: linear-gradient(180deg, #f97316 0%, #c2410c 100%);
+      color: #fff;
+      border: 3px solid #fed7aa;
+      border-radius: 999px;
+      padding: 13px 24px;
+      font-size: 0.96rem;
+      font-weight: 800;
+      box-shadow: 0 6px 20px rgba(194, 65, 12, 0.65);
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      touch-action: none;
+    }
+
+    .hold-heat-btn.visible {
+      display: inline-flex;
+    }
+
+    .hold-heat-btn.active-flame {
+      transform: scale(0.96);
+      background: linear-gradient(180deg, #ef4444 0%, #991b1b 100%);
+      box-shadow: 0 0 28px rgba(239, 68, 68, 0.95);
+    }
+
+    /* ==================== MODALS & RESULT SCREEN ==================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 10, 4, 0.84);
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+      animation: fadeIn 0.22s ease;
+    }
+
+    .modal-box {
+      background: var(--cream-paper);
+      color: var(--text-dark);
+      width: 100%;
+      max-width: 780px;
+      max-height: 90dvh;
+      border-radius: 22px;
+      border: 3px solid #d97706;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.62);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      background: linear-gradient(90deg, #451a03 0%, #78350f 100%);
+      color: #fffbeb;
+      padding: 13px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .modal-header h2 {
+      font-size: 1.12rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-body {
+      padding: 16px 18px;
+      overflow-y: auto;
+      flex: 1;
+      line-height: 1.52;
+    }
+
+    .modal-footer {
+      padding: 11px 18px;
+      background: #fef3c7;
+      border-top: 1px solid #fcd34d;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .recipe-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .recipe-tab-btn {
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 2px solid #d97706;
+      background: #fffbeb;
+      color: #78350f;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .recipe-tab-btn.active {
+      background: #d97706;
+      color: #fff;
+    }
+
+    .recipe-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .recipe-card-section {
+      background: #fff;
+      border: 1px solid #fde68a;
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .recipe-card-section h3 {
+      color: #9a3412;
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+
+    .recipe-card-section ul, .recipe-card-section ol {
+      padding-left: 18px;
+      font-size: 0.9rem;
+    }
+
+    .culture-note {
+      background: #fffbeb;
+      border-left: 4px solid #15803d;
+      padding: 11px 13px;
+      border-radius: 10px;
+      margin-top: 12px;
+      font-size: 0.9rem;
+    }
+
+    .tutorial-canvas-wrap {
+      width: 100%;
+      height: 240px;
+      background: #3e2212;
+      border-radius: 14px;
+      border: 2px solid #d97706;
+      position: relative;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    #tutorial-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+    }
+
+    .tutorial-steps-pills {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .tut-pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      background: #fde68a;
+      color: #78350f;
+    }
+
+    .tut-pill.active {
+      background: #d97706;
+      color: #fff;
+    }
+
+    .tut-pill.done {
+      background: #15803d;
+      color: #fff;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 12px;
+    }
+
+    .gallery-item {
+      background: #fff;
+      border: 2px solid #fcd34d;
+      border-radius: 14px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .gallery-thumb {
+      width: 100%;
+      height: 108px;
+      background: radial-gradient(circle, #fef3c7, #fde68a);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #screen-result {
+      background: radial-gradient(circle at center, #4a2815 0%, #1e0e06 100%);
+      color: var(--cream-paper);
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      overflow-y: auto;
+    }
+
+    .result-card {
+      background: var(--cream-paper);
+      color: var(--text-dark);
+      width: 100%;
+      max-width: 720px;
+      border-radius: 24px;
+      border: 4px solid #f59e0b;
+      padding: 18px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.65);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 94dvh;
+      overflow-y: auto;
+    }
+
+    .stars-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      font-size: 2.4rem;
+    }
+
+    .star-icon {
+      filter: grayscale(1) opacity(0.35);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+    }
+
+    .star-icon.earned {
+      filter: none;
+      transform: scale(1.12);
+    }
+
+    .score-breakdown {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: #fffbeb;
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px solid #fde68a;
+      font-size: 0.85rem;
+    }
+
+    .score-row-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 8px;
+      background: #fff;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    .certificate-paper {
+      background: linear-gradient(135deg, #fffdf7 0%, #fef3c7 100%);
+      border: 8px double #b45309;
+      border-radius: 16px;
+      padding: 18px;
+      text-align: center;
+      position: relative;
+      box-shadow: var(--shadow-card);
+    }
+
+    .cert-title {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: #78350f;
+    }
+
+    .cert-name-input {
+      font-size: 1.25rem;
+      font-weight: 800;
+      text-align: center;
+      border: none;
+      border-bottom: 2px dashed #b45309;
+      background: rgba(255,255,255,0.75);
+      color: #29170d;
+      padding: 5px 12px;
+      margin: 8px auto;
+      width: 88%;
+      max-width: 350px;
+      border-radius: 6px;
+    }
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #fde68a;
+    }
+
+    .setting-row input[type="range"] {
+      width: 150px;
+      accent-color: #d97706;
+    }
+
+    /* Responsive Mobile Portrait & Tablet */
+    @media (max-width: 860px) {
+      .menu-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 14px;
+      }
+      .badge-papua, .menu-buttons-grid {
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .game-workspace {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+      }
+      .mama-side-panel {
+        flex-direction: column;
+        border-right: none;
+        border-bottom: 2px solid #78350f;
+        padding: 7px 10px;
+        gap: 6px;
+        overflow: visible;
+      }
+      .mama-card {
+        flex-direction: row;
+        padding: 6px 8px;
+        gap: 8px;
+      }
+      .mama-avatar-wrap {
+        width: 48px;
+        height: 48px;
+      }
+      .mama-name-tag {
+        display: none;
+      }
+      .mama-dialogue-box {
+        font-size: 0.78rem;
+        padding: 6px 9px;
+      }
+      .instruction-card {
+        padding: 6px 10px;
+      }
+      .instruction-title {
+        display: none;
+      }
+      .instruction-text {
+        font-size: 0.78rem;
+      }
+      .step-checklist {
+        display: none;
+      }
+      .recipe-grid, .score-breakdown {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      body * { visibility: hidden; }
+      #certificate-printable, #certificate-printable * { visibility: visible; }
+      #certificate-printable {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        background: #fffdf7;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== 1. MAIN MENU SCREEN ==================== -->
+  <section id="screen-menu" class="screen active">
+    <div class="papua-border-strip"></div>
+    <div class="menu-container">
+      <div class="menu-hero">
+        <div class="badge-papua">🌴 Kuliner Nusantara • Tanah Papua (HD Edition)</div>
+        <h1 class="game-logo-title">PAPUA COOKING ADVENTURE</h1>
+        <p class="game-tagline">Explore the Taste of Papua!</p>
+        <p class="menu-desc">
+          Masuki dapur hangat khas Papua bersama <strong>Mama</strong>! Pelajari dan praktikkan langsung cara mengolah <strong>Papeda</strong> dari tepung sagu asli serta memasak <strong>Ikan Kuah Kuning</strong> yang segar dan kaya rempah.
+        </p>
+        <div class="menu-buttons-grid">
+          <button class="btn btn-primary btn-start-main" onclick="APP.startNewGame()">
+            🍳 Mulai Memasak
+          </button>
+          <button class="btn btn-secondary" onclick="UI.openModal('modal-tutorial')">
+            🎯 Tutorial Interaktif
+          </button>
+          <button class="btn btn-secondary" onclick="UI.openModal('modal-recipe')">
+            📖 Buku Resep
+          </button>
+          <button class="btn btn-secondary" onclick="UI.openModal('modal-gallery')">
+            🖼️ Galeri Masakan
+          </button>
+          <button class="btn btn-secondary" onclick="UI.openModal('modal-settings')">
+            ⚙️ Pengaturan
+          </button>
+        </div>
+      </div>
+
+      <div class="menu-visual-card">
+        <div class="menu-showcase-row">
+          <div class="menu-mama-box" id="menu-mama-illustration"></div>
+          <div class="menu-dish-box" id="menu-dish-illustration"></div>
+        </div>
+        <div class="mama-welcome-bubble">
+          💬 <strong>Mama:</strong> "Halo! Selamat datang di dapur kita! Hari ini kita akan memasak Papeda dan Ikan Kuah Kuning khas Papua. Yuk coba Tutorial dulu atau langsung Mulai Memasak!"
+        </div>
+      </div>
+    </div>
+    <div class="papua-border-strip"></div>
+  </section>
+
+  <!-- ==================== 2. GAMEPLAY SCREEN ==================== -->
+  <section id="screen-game" class="screen">
+    <header class="game-hud">
+      <div class="hud-left">
+        <button class="btn btn-secondary btn-sm" onclick="APP.pauseGame()" title="Jeda Permainan">
+          ⏸️ Jeda
+        </button>
+        <div class="hud-pill" id="hud-timer">⏱️ 00:00</div>
+      </div>
+
+      <div class="stage-progress-bar-wrap">
+        <div class="stage-progress-label">
+          <span id="hud-stage-name">Tahap 1/7: Persiapan Bahan</span>
+          <span id="hud-stage-pct">0%</span>
+        </div>
+        <div class="stage-progress-track">
+          <div class="stage-progress-fill" id="hud-stage-fill"></div>
+        </div>
+      </div>
+
+      <div class="hud-right">
+        <button class="btn btn-secondary btn-sm" id="hud-mute-btn" onclick="AUDIO.toggleMute()" title="Suara">
+          🔊
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="UI.openModal('modal-recipe')" title="Lihat Resep">
+          📖
+        </button>
+      </div>
+    </header>
+
+    <div class="game-workspace">
+      <aside class="mama-side-panel">
+        <div class="mama-card">
+          <div class="mama-avatar-wrap" id="game-mama-avatar"></div>
+          <span class="mama-name-tag">MAMA • PEMANDU DAPUR</span>
+          <div class="mama-dialogue-box" id="mama-dialogue-text">
+            "Halo! Ayo kita siapkan bahan-bahan segar di meja dapur terlebih dahulu!"
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instruction-title">📌 Instruksi Aktivitas</div>
+          <div class="instruction-text" id="stage-instruction-text">
+            Seret atau ketuk bahan Papeda dan Ikan Kuah Kuning ke baki persiapan.
+          </div>
+        </div>
+
+        <div class="step-checklist" id="stage-checklist"></div>
+      </aside>
+
+      <main class="kitchen-stage-area" id="kitchen-stage-container">
+        <div class="kitchen-3d-backdrop" id="kitchen-backdrop">
+          <div class="kitchen-wall-trim"></div>
+          <div class="kitchen-window"></div>
+          <div class="kitchen-counter-3d"></div>
+        </div>
+
+        <canvas id="cooking-canvas"></canvas>
+
+        <div class="canvas-overlay-ui">
+          <div class="top-action-banner">
+            <div class="meter-card" id="task-meter-card">
+              <span id="task-meter-label" style="font-size:0.78rem;font-weight:700;">Progres Tahap:</span>
+              <div class="meter-bar-outer">
+                <div class="meter-bar-inner" id="task-meter-fill"></div>
+              </div>
+              <span id="task-meter-val" style="font-size:0.78rem;font-weight:800;">0%</span>
+            </div>
+
+            <div class="meter-card" id="heat-meter-card" style="display:none;">
+              <span style="font-size:0.78rem;font-weight:700;">🔥 Suhu:</span>
+              <div class="meter-bar-outer" style="width:105px;position:relative;background:linear-gradient(90deg,#38bdf8 0%,#22c55e 40%,#22c55e 72%,#ef4444 100%);">
+                <div id="heat-needle" style="position:absolute;top:-2px;bottom:-2px;width:5px;background:#fff;border:1px solid #000;left:20%;"></div>
+              </div>
+              <span id="heat-status-text" style="font-size:0.76rem;font-weight:800;">Kecil</span>
+            </div>
+
+            <button class="retry-stage-btn" onclick="STAGES.retryCurrentStage()" title="Ulangi Tahap Ini">
+              ↺ Ulang Tahap
+            </button>
+          </div>
+
+          <div class="feedback-toast" id="feedback-toast">Bagus Sekali!</div>
+
+          <div class="bottom-interactive-controls">
+            <button class="hold-heat-btn" id="btn-hold-heat">
+              🔥 TAHAN API KOMPOR
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <!-- ==================== 3. RESULT SCREEN ==================== -->
+  <section id="screen-result" class="screen">
+    <div class="result-card">
+      <div style="text-align:center;">
+        <span class="badge-papua" style="background:#fef3c7;color:#92400e;border-color:#f59e0b;">🎉 Hidangan Selesai Disajikan!</span>
+        <h2 style="font-size:1.6rem;color:#451a03;margin-top:6px;">Papeda & Ikan Kuah Kuning</h2>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;">
+        <div id="result-dish-visual" style="width:215px;"></div>
+        <div style="text-align:center;">
+          <div class="stars-row" id="result-stars">
+            <span class="star-icon">⭐</span>
+            <span class="star-icon">⭐</span>
+            <span class="star-icon">⭐</span>
+          </div>
+          <div style="font-size:1.85rem;font-weight:900;color:#b45309;margin-top:4px;" id="result-total-score">95 / 100</div>
+          <div style="font-size:0.92rem;font-weight:700;color:#15803d;" id="result-rank-title">Gelar: Master Koki Papua</div>
+          <div style="font-size:0.84rem;color:#6b4c3b;margin-top:2px;" id="result-time-taken">Waktu Memasak: 03:20</div>
+        </div>
+      </div>
+
+      <div class="mama-welcome-bubble" id="result-mama-comment">
+        💬 <strong>Mama:</strong> "Hebat sekali! Papedamu bening kenyal dan Ikan Kuah Kuningnya harum menggugah selera!"
+      </div>
+
+      <div class="score-breakdown" id="result-score-breakdown"></div>
+
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:4px;">
+        <button class="btn btn-primary" onclick="APP.startNewGame()">🔄 Main Lagi</button>
+        <button class="btn btn-green" onclick="UI.openCertificate()">📜 Lihat Sertifikat</button>
+        <button class="btn btn-secondary" onclick="UI.openModal('modal-gallery')">🖼️ Galeri Masakan</button>
+        <button class="btn btn-secondary" onclick="APP.goToMenu()">🏠 Menu Utama</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- MODAL: TUTORIAL INTERAKTIF -->
+  <div class="modal-backdrop" id="modal-tutorial">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>🎯 Tutorial Interaktif Dapur</h2>
+        <button class="btn btn-danger btn-sm" onclick="UI.closeModal('modal-tutorial')">✖ Tutup</button>
+      </div>
+      <div class="modal-body">
+        <div class="tutorial-steps-pills" id="tutorial-pills">
+          <span class="tut-pill active" data-tut="0">1. Swipe (Potong)</span>
+          <span class="tut-pill" data-tut="1">2. Drag & Drop</span>
+          <span class="tut-pill" data-tut="2">3. Mengaduk Melingkar</span>
+          <span class="tut-pill" data-tut="3">4. Hold Api & Jeda</span>
+        </div>
+        <p id="tutorial-instruction" style="font-weight:700;color:#451a03;">
+          Latihan 1: Usap (swipe) melintasi garis putus-putus pada serai untuk memotongnya!
+        </p>
+        <div class="tutorial-canvas-wrap">
+          <canvas id="tutorial-canvas"></canvas>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span id="tutorial-status-msg" style="font-size:0.88rem;font-weight:700;color:#15803d;">
+            Coba langsung di area papan di atas!
+          </span>
+          <button class="btn btn-secondary btn-sm" id="tut-pause-demo-btn" style="display:none;" onclick="TUTORIAL.triggerPauseDemo()">
+            ⏸️ Uji Tombol Pause
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="TUTORIAL.reset()">↺ Ulangi Latihan</button>
+        <button class="btn btn-primary" onclick="UI.closeModal('modal-tutorial'); APP.startNewGame();">🍳 Langsung Mulai Memasak</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: BUKU RESEP & BUDAYA -->
+  <div class="modal-backdrop" id="modal-recipe">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>📖 Buku Resep & Budaya Kuliner Papua</h2>
+        <button class="btn btn-danger btn-sm" onclick="UI.closeModal('modal-recipe')">✖ Tutup</button>
+      </div>
+      <div class="modal-body">
+        <div class="recipe-tabs">
+          <button class="recipe-tab-btn active" onclick="UI.switchRecipeTab('papeda', this)">🥣 Resep Papeda</button>
+          <button class="recipe-tab-btn" onclick="UI.switchRecipeTab('kuahkuning', this)">🐟 Ikan Kuah Kuning</button>
+          <button class="recipe-tab-btn" onclick="UI.switchRecipeTab('budaya', this)">🌴 Wawasan Budaya Papua</button>
+        </div>
+
+        <div id="recipe-content-papeda" class="recipe-tab-pane">
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;padding:12px;border-radius:14px;border:1px solid #fde68a;">
+            <div id="recipe-papeda-svg" style="width:120px;flex-shrink:0;"></div>
+            <div>
+              <h3 style="color:#78350f;font-size:1.15rem;">Papeda (Bubur Sagu Khas Papua)</h3>
+              <p style="font-size:0.88rem;color:#573a28;">
+                Makanan pokok masyarakat pesisir dan dataran rendah Papua serta Maluku yang terbuat dari pati pohon sagu (<em>Metroxylon sagu</em>). Bertekstur kenyal, bening keabu-abuan, dan kaya serat.
+              </p>
+            </div>
+          </div>
+          <div class="recipe-grid">
+            <div class="recipe-card-section">
+              <h3>🧺 Daftar Bahan</h3>
+              <ul>
+                <li>200 gram <strong>Tepung Sagu</strong> asli Papua</li>
+                <li>250 ml <strong>Air dingin / suhu ruang</strong></li>
+                <li>800 ml <strong>Air mendidih</strong></li>
+                <li>½ sendok teh <strong>Garam</strong> (opsional)</li>
+              </ul>
+            </div>
+            <div class="recipe-card-section">
+              <h3>👩‍🍳 Cara Membuat</h3>
+              <ol>
+                <li>Masukkan tepung sagu dan sedikit garam ke mangkuk besar tahan panas.</li>
+                <li>Tuang air dingin sedikit demi sedikit sambil diaduk hingga larut rata.</li>
+                <li>Tuangkan air yang benar-benar mendidih sambil terus diaduk cepat dan searah.</li>
+                <li>Aduk hingga warna putih susu berubah menjadi bening kental mengkilap.</li>
+                <li>Gulung Papeda menggunakan sumpit kayu khusus (<em>gata-gata</em>).</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <div id="recipe-content-kuahkuning" class="recipe-tab-pane" style="display:none;">
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;padding:12px;border-radius:14px;border:1px solid #fde68a;">
+            <div id="recipe-fish-svg" style="width:120px;flex-shrink:0;"></div>
+            <div>
+              <h3 style="color:#78350f;font-size:1.15rem;">Ikan Kuah Kuning Papua</h3>
+              <p style="font-size:0.88rem;color:#573a28;">
+                Pendamping utama Papeda dari ikan segar (tongkol, kakap, mubara, atau ikan Danau Sentani) dengan kuah bening kuning kunyit tanpa santan yang segar.
+              </p>
+            </div>
+          </div>
+          <div class="recipe-grid">
+            <div class="recipe-card-section">
+              <h3>🧺 Daftar Bahan</h3>
+              <ul>
+                <li>500 gram <strong>Ikan segar</strong>, potong 4 bagian</li>
+                <li>1 buah <strong>Jeruk nipis</strong> & garam</li>
+                <li>4 cm <strong>Kunyit</strong>, 3 cm <strong>Jahe</strong></li>
+                <li>6 siung <strong>Bawang merah</strong>, 3 siung <strong>Bawang putih</strong></li>
+                <li>2 batang <strong>Serai</strong> & 2 lembar <strong>Daun salam</strong></li>
+                <li><strong>Daun kemangi</strong>, <strong>Tomat</strong>, & <strong>Cabai</strong></li>
+                <li>700 ml <strong>Air bersih</strong> & sedikit minyak</li>
+              </ul>
+            </div>
+            <div class="recipe-card-section">
+              <h3>👩‍🍳 Cara Memasak</h3>
+              <ol>
+                <li>Bersihkan sisik ikan, bilas bersih, lalu lumuri air jeruk nipis.</li>
+                <li>Haluskan kunyit, bawang merah, bawang putih, dan jahe di cobek.</li>
+                <li>Tumis bumbu halus bersama serai dan daun salam hingga harum.</li>
+                <li>Tuangkan air dan didihkan, lalu masukkan potongan ikan segar.</li>
+                <li>Masak dengan api sedang, tambahkan garam, tomat, dan daun kemangi.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <div id="recipe-content-budaya" class="recipe-tab-pane" style="display:none;">
+          <div class="culture-note">
+            <strong>🌿 Fakta Kuliner & Tradisi Sagu Papua:</strong><br/>
+            Pohon sagu tumbuh subur di wilayah rawa dan pesisir Papua seperti Sentani, Merauke, Sorong, dan Asmat. Satu batang pohon sagu matang menghasilkan pati sagu yang menjadi sumber pangan utama secara turun-temurun.
+          </div>
+          <div class="culture-note" style="border-left-color:#d97706;">
+            <strong>🥢 Etika & Cara Menyantap Papeda:</strong><br/>
+            Papeda digulung menggunakan sepasang sumpit kayu bernama <em>gata-gata</em>, diletakkan di piring berisi kuah kuning, lalu langsung diseruput hangat-hangat bersama potongan ikan.
+          </div>
+          <div class="culture-note" style="border-left-color:#9a3412;">
+            <strong>🗺️ Variasi Resep Daerah & Keluarga:</strong><br/>
+            Di wilayah pesisir seperti Jayapura dan Biak, Ikan Kuah Kuning umumnya memakai ikan laut (tongkol/mubara). Di sekitar Danau Sentani, masyarakat juga kerap memakai ikan gabus atau mujair segar, dan beberapa keluarga menambahkan belimbing wuluh atau kenari tumbuk.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: GALERI MASAKAN -->
+  <div class="modal-backdrop" id="modal-gallery">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>🖼️ Galeri Hasil Masakan</h2>
+        <button class="btn btn-danger btn-sm" onclick="UI.closeModal('modal-gallery')">✖ Tutup</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:0.88rem;color:#6b4c3b;margin-bottom:12px;">
+          Rekam jejak hidangan Papeda & Ikan Kuah Kuning yang telah berhasil kamu selesaikan di dapur Papua.
+        </p>
+        <div class="gallery-grid" id="gallery-list-container"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" onclick="STORAGE.clearGallery()">🗑️ Bersihkan Riwayat</button>
+        <button class="btn btn-primary btn-sm" onclick="UI.closeModal('modal-gallery')">Selesai</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SERTIFIKAT PENCAPAIAN -->
+  <div class="modal-backdrop" id="modal-certificate">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>📜 Sertifikat Pencapaian Koki</h2>
+        <button class="btn btn-danger btn-sm" onclick="UI.closeModal('modal-certificate')">✖ Tutup</button>
+      </div>
+      <div class="modal-body">
+        <div class="certificate-paper" id="certificate-printable">
+          <div style="font-size:0.82rem;font-weight:800;color:#9a3412;letter-spacing:1.5px;">PAPUA COOKING ADVENTURE</div>
+          <div class="cert-title">SERTIFIKAT APRESIASI KULINER</div>
+          <p style="font-size:0.88rem;color:#573a28;margin-top:8px;">Diberikan dengan bangga kepada:</p>
+          <input type="text" id="cert-player-name" class="cert-name-input" value="Koki Muda Nusantara" placeholder="Ketik namamu di sini..." />
+          <p style="font-size:0.88rem;color:#451a03;max-width:520px;margin:8px auto;">
+            Telah berhasil menyelesaikan seluruh tahapan memasak hidangan tradisional Papua <strong>Papeda & Ikan Kuah Kuning</strong> dengan penuh ketelitian dan rasa cinta budaya.
+          </p>
+          <div style="display:flex;justify-content:center;gap:14px;margin:12px 0;flex-wrap:wrap;">
+            <div style="background:#fff;padding:7px 14px;border-radius:10px;border:1px solid #f59e0b;">
+              <div style="font-size:0.72rem;color:#78350f;">BINTANG</div>
+              <div id="cert-stars-display" style="font-size:1.2rem;">⭐⭐⭐</div>
+            </div>
+            <div style="background:#fff;padding:7px 14px;border-radius:10px;border:1px solid #f59e0b;">
+              <div style="font-size:0.72rem;color:#78350f;">SKOR AKHIR</div>
+              <div id="cert-score-display" style="font-size:1.15rem;font-weight:900;color:#b45309;">95 / 100</div>
+            </div>
+            <div style="background:#fff;padding:7px 14px;border-radius:10px;border:1px solid #f59e0b;">
+              <div style="font-size:0.72rem;color:#78350f;">GELAR</div>
+              <div id="cert-rank-display" style="font-size:1rem;font-weight:800;color:#15803d;">Master Koki Papua</div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:14px;padding:0 12px;font-size:0.8rem;color:#78350f;">
+            <div id="cert-date-display">Tanggal: 20 November 2026</div>
+            <div style="text-align:center;">
+              <div style="font-family:cursive;font-size:1.05rem;color:#9a3412;font-weight:700;">Mama Papua</div>
+              <div style="border-top:1px solid #78350f;padding-top:2px;">Instruktur Dapur</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-green" onclick="CERT.downloadPNG()">⬇️ Unduh PNG</button>
+        <button class="btn btn-primary" onclick="window.print()">🖨️ Cetak Sertifikat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PENGATURAN -->
+  <div class="modal-backdrop" id="modal-settings">
+    <div class="modal-box" style="max-width:480px;">
+      <div class="modal-header">
+        <h2>⚙️ Pengaturan Audio & Game</h2>
+        <button class="btn btn-danger btn-sm" onclick="UI.closeModal('modal-settings')">✖ Tutup</button>
+      </div>
+      <div class="modal-body">
+        <div class="setting-row">
+          <div>
+            <strong>🎵 Volume Musik Latar</strong>
+            <div style="font-size:0.8rem;color:#6b4c3b;">Alunan melodi ceria khas dapur Papua</div>
+          </div>
+          <input type="range" id="slider-bgm" min="0" max="100" value="45" oninput="AUDIO.setBgmVolume(this.value)" />
+        </div>
+        <div class="setting-row">
+          <div>
+            <strong>🔔 Volume Efek Suara (SFX)</strong>
+            <div style="font-size:0.8rem;color:#6b4c3b;">Suara memotong, mengaduk, mendidih & Mama</div>
+          </div>
+          <input type="range" id="slider-sfx" min="0" max="100" value="75" oninput="AUDIO.setSfxVolume(this.value)" />
+        </div>
+        <div class="setting-row" style="border-bottom:none;">
+          <div>
+            <strong>🔇 Mode Senyap (Mute Semua)</strong>
+            <div style="font-size:0.8rem;color:#6b4c3b;">Matikan seluruh suara sementara</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="settings-mute-btn" onclick="AUDIO.toggleMute()">🔊 Aktif</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="UI.closeModal('modal-settings')">Simpan & Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PAUSE MENU -->
+  <div class="modal-backdrop" id="modal-pause">
+    <div class="modal-box" style="max-width:420px;text-align:center;">
+      <div class="modal-header">
+        <h2>⏸️ Permainan Dijeda</h2>
+      </div>
+      <div class="modal-body" style="display:flex;flex-direction:column;gap:12px;">
+        <p style="font-weight:600;color:#573a28;">Timer dan aktivitas dapur sedang dihentikan sementara.</p>
+        <button class="btn btn-green" onclick="APP.resumeGame()">▶️ Lanjutkan Memasak</button>
+        <button class="btn btn-secondary" onclick="UI.openModal('modal-settings')">⚙️ Pengaturan Audio</button>
+        <button class="btn btn-secondary" onclick="UI.openModal('modal-recipe')">📖 Lihat Buku Resep</button>
+        <button class="btn btn-danger" onclick="APP.confirmQuitToMenu()">🏠 Kembali ke Menu Utama</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* Safe polyfill for Canvas roundRect on older Android WebViews */
+    if (window.CanvasRenderingContext2D && !CanvasRenderingContext2D.prototype.roundRect) {
+      CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+        if (typeof r === 'number') r = { tl: r, tr: r, br: r, bl: r };
+        else r = { tl: 0, tr: 0, br: 0, bl: 0, ...r };
+        this.beginPath();
+        this.moveTo(x + r.tl, y);
+        this.lineTo(x + w - r.tr, y);
+        this.quadraticCurveTo(x + w, y, x + w, y + r.tr);
+        this.lineTo(x + w, y + h - r.br);
+        this.quadraticCurveTo(x + w, y + h, x + w - r.br, y + h);
+        this.lineTo(x + r.bl, y + h);
+        this.quadraticCurveTo(x, y + h, x, y + h - r.bl);
+        this.lineTo(x, y + r.tl);
+        this.quadraticCurveTo(x, y, x + r.tl, y);
+        this.closePath();
+        return this;
+      };
+    }
+
+    /* ============================================================================
+       1. GAME CONFIGURATION & CULINARY DATA
+    ============================================================================ */
+    const CONFIG = {
+      stages: [
+        { id: 0, name: 'Tahap 1/7: Persiapan Bahan', short: 'Persiapan Bahan', closeup: false },
+        { id: 1, name: 'Tahap 2/7: Membersihkan Ikan', short: 'Bersihkan Ikan', closeup: true },
+        { id: 2, name: 'Tahap 3/7: Menyiapkan Bumbu', short: 'Potong Bumbu', closeup: true },
+        { id: 3, name: 'Tahap 4/7: Menghaluskan Bumbu', short: 'Ulek Bumbu', closeup: true },
+        { id: 4, name: 'Tahap 5/7: Memasak Ikan Kuah Kuning', short: 'Masak Kuah Kuning', closeup: true },
+        { id: 5, name: 'Tahap 6/7: Membuat Papeda', short: 'Buat Papeda', closeup: true },
+        { id: 6, name: 'Tahap 7/7: Penyajian Makanan', short: 'Plating Sajian', closeup: false }
+      ],
+      prepIngredients: [
+        { id: 'sagu', name: 'Tepung Sagu', icon: '🥣', required: true },
+        { id: 'air', name: 'Air Bersih', icon: '💧', required: true },
+        { id: 'garam', name: 'Garam', icon: '🧂', required: true },
+        { id: 'ikan', name: 'Ikan Segar', icon: '🐟', required: true },
+        { id: 'kunyit', name: 'Kunyit', icon: '🫚', required: true },
+        { id: 'bamer', name: 'Bawang Merah', icon: '🧅', required: true },
+        { id: 'baput', name: 'Bawang Putih', icon: '🧄', required: true },
+        { id: 'jahe', name: 'Jahe', icon: '🥔', required: true },
+        { id: 'serai', name: 'Serai', icon: '🌿', required: true },
+        { id: 'salam', name: 'Daun Kemangi', icon: '🍃', required: true },
+        { id: 'jeruk', name: 'Jeruk Nipis', icon: '🍋', required: true },
+        { id: 'tomat', name: 'Tomat & Cabai', icon: '🍅', required: true },
+        { id: 'santan', name: 'Santan Kelapa', icon: '🥥', required: false, hint: 'Ikan Kuah Kuning khas Papua tidak memakai santan agar kuahnya segar!' },
+        { id: 'kecap', name: 'Kecap Manis', icon: '🍾', required: false, hint: 'Kita tidak pakai kecap manis supaya warna kuning kunyit tetap cerah!' }
+      ]
+    };
+
+    /* ============================================================================
+       2. CENTRALIZED REACTIVE GAME STATE (WITH ZERO-LEAK TRANSITION SCHEDULER)
+    ============================================================================ */
+    const STATE = {
+      screen: 'menu',
+      paused: false,
+      isTransitioning: false,
+      gameFinished: false,
+      stageIndex: 0,
+      subStep: 0,
+      elapsedSeconds: 0,
+      timerInterval: null,
+      pendingTimeout: null,
+      scores: {
+        chopping: 100,
+        spices: 100,
+        fishCooking: 100,
+        papedaMaking: 100,
+        plating: 100
+      },
+      lastResult: null,
+      stageData: {},
+
+      schedule(fn, ms) {
+        if (this.pendingTimeout) {
+          clearTimeout(this.pendingTimeout);
+          this.pendingTimeout = null;
+        }
+        this.pendingTimeout = setTimeout(() => {
+          this.pendingTimeout = null;
+          fn();
+        }, ms);
+      },
+
+      clearScheduled() {
+        if (this.pendingTimeout) {
+          clearTimeout(this.pendingTimeout);
+          this.pendingTimeout = null;
+        }
+      }
+    };
+
+    /* ============================================================================
+       3. PROCEDURAL WEB AUDIO ENGINE
+    ============================================================================ */
+    const AUDIO = {
+      ctx: null,
+      bgmVolume: 0.45,
+      sfxVolume: 0.75,
+      muted: false,
+      bgmTimer: null,
+      bgmStep: 0,
+
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume().catch(() => {});
+        }
+      },
+
+      startBgm() {
+        this.init();
+        if (this.bgmTimer) return;
+        const notes = [523.25, 659.25, 783.99, 659.25, 880.00, 783.99, 659.25, 587.33,
+                       523.25, 587.33, 659.25, 783.99, 659.25, 523.25, 587.33, 523.25];
+        this.bgmTimer = setInterval(() => {
+          if (this.muted || STATE.paused || STATE.screen !== 'game') return;
+          if (!this.ctx || this.bgmVolume <= 0.01) return;
+          const freq = notes[this.bgmStep % notes.length];
+          this.bgmStep++;
+          this.playTone(freq, 'triangle', 0.22, this.bgmVolume * 0.14);
+        }, 420);
+      },
+
+      stopBgm() {
+        if (this.bgmTimer) {
+          clearInterval(this.bgmTimer);
+          this.bgmTimer = null;
+        }
+      },
+
+      setBgmVolume(val) { this.bgmVolume = Number(val) / 100; },
+      setSfxVolume(val) { this.sfxVolume = Number(val) / 100; },
+
+      toggleMute() {
+        this.muted = !this.muted;
+        const label = this.muted ? '🔇' : '🔊';
+        const hudBtn = document.getElementById('hud-mute-btn');
+        const setBtn = document.getElementById('settings-mute-btn');
+        if (hudBtn) hudBtn.textContent = label;
+        if (setBtn) setBtn.textContent = this.muted ? '🔇 Senyap' : '🔊 Aktif';
+      },
+
+      playTone(freq, type = 'sine', duration = 0.15, vol = 0.25) {
+        if (this.muted || !this.ctx || vol <= 0) return;
+        try {
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(vol, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + duration);
+        } catch (e) {}
+      },
+
+      playNoise(duration = 0.12, vol = 0.18, filterFreq = 1200) {
+        if (this.muted || !this.ctx || vol <= 0) return;
+        try {
+          const bufferSize = Math.floor(this.ctx.sampleRate * duration);
+          const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+          const noise = this.ctx.createBufferSource();
+          noise.buffer = buffer;
+
+          const filter = this.ctx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.value = filterFreq;
+
+          const gain = this.ctx.createGain();
+          const now = this.ctx.currentTime;
+          gain.gain.setValueAtTime(vol, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+          noise.connect(filter);
+          filter.connect(gain);
+          gain.connect(this.ctx.destination);
+          noise.start(now);
+        } catch (e) {}
+      },
+
+      sfx(type) {
+        this.init();
+        const v = this.sfxVolume;
+        if (this.muted || v <= 0.01) return;
+
+        switch (type) {
+          case 'chop':
+            this.playTone(190, 'square', 0.07, v * 0.25);
+            this.playNoise(0.06, v * 0.3, 900);
+            break;
+          case 'scrub':
+            this.playNoise(0.09, v * 0.2, 2200);
+            break;
+          case 'pour':
+            this.playNoise(0.25, v * 0.22, 650);
+            break;
+          case 'grind':
+            this.playTone(130, 'sawtooth', 0.09, v * 0.14);
+            this.playNoise(0.08, v * 0.16, 500);
+            break;
+          case 'stir':
+            this.playNoise(0.1, v * 0.15, 800);
+            break;
+          case 'sizzle':
+            this.playNoise(0.22, v * 0.22, 3200);
+            break;
+          case 'pop':
+            this.playTone(540, 'sine', 0.1, v * 0.22);
+            break;
+          case 'warn':
+            this.playTone(240, 'sawtooth', 0.18, v * 0.22);
+            break;
+          case 'talk':
+            this.playTone(460 + Math.random() * 120, 'sine', 0.06, v * 0.1);
+            break;
+          case 'success':
+            this.playTone(523.25, 'triangle', 0.14, v * 0.28);
+            setTimeout(() => this.playTone(659.25, 'triangle', 0.14, v * 0.28), 110);
+            setTimeout(() => this.playTone(783.99, 'triangle', 0.25, v * 0.3), 220);
+            break;
+          case 'fanfare':
+            [523.25, 659.25, 783.99, 1046.5].forEach((n, idx) => {
+              setTimeout(() => this.playTone(n, 'triangle', 0.28, v * 0.32), idx * 130);
+            });
+            break;
+        }
+      }
+    };
+
+    /* ============================================================================
+       4. HD VECTOR ART ASSETS (MAMA & ULTRA-DETAILED COOKED DISHES)
+    ============================================================================ */
+    const ASSETS = {
+      getMamaSVG(expression = 'happy') {
+        const mouthMap = {
+          happy: '<path d="M88 112 Q100 124 112 112" stroke="#7f1d1d" stroke-width="3.5" fill="none" stroke-linecap="round"/>',
+          proud: '<path d="M86 110 Q100 128 114 110 Z" fill="#dc2626" stroke="#7f1d1d" stroke-width="2"/>',
+          talking: '<ellipse cx="100" cy="114" rx="8" ry="6" fill="#991b1b"/>',
+          warn: '<path d="M90 118 Q100 110 110 118" stroke="#7f1d1d" stroke-width="3.5" fill="none" stroke-linecap="round"/>'
+        };
+        const browMap = {
+          happy: '<path d="M80 87 Q87 83 94 87" stroke="#1c1917" stroke-width="3" fill="none"/><path d="M106 87 Q113 83 120 87" stroke="#1c1917" stroke-width="3" fill="none"/>',
+          proud: '<path d="M80 84 Q87 79 94 85" stroke="#1c1917" stroke-width="3" fill="none"/><path d="M106 85 Q113 79 120 84" stroke="#1c1917" stroke-width="3" fill="none"/>',
+          talking: '<path d="M80 86 Q87 82 94 86" stroke="#1c1917" stroke-width="3" fill="none"/><path d="M106 86 Q113 82 120 86" stroke="#1c1917" stroke-width="3" fill="none"/>',
+          warn: '<path d="M80 84 L94 89" stroke="#1c1917" stroke-width="3" fill="none"/><path d="M120 84 L106 89" stroke="#1c1917" stroke-width="3" fill="none"/>'
+        };
+
+        return `
+        <svg viewBox="0 0 200 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="skinGrad" cx="45%" cy="38%" r="60%">
+              <stop offset="0%" stop-color="#9c5a38"/>
+              <stop offset="100%" stop-color="#61331b"/>
+            </radialGradient>
+            <linearGradient id="dressGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#d97706"/>
+              <stop offset="100%" stop-color="#92400e"/>
+            </linearGradient>
+          </defs>
+          <circle cx="100" cy="82" r="52" fill="#1c1917"/>
+          <circle cx="62" cy="76" r="22" fill="#1c1917"/>
+          <circle cx="138" cy="76" r="22" fill="#1c1917"/>
+          <circle cx="72" cy="48" r="22" fill="#1c1917"/>
+          <circle cx="128" cy="48" r="22" fill="#1c1917"/>
+          <circle cx="100" cy="40" r="24" fill="#1c1917"/>
+          <path d="M42 195 C42 152 68 140 100 140 C132 140 158 152 158 195 Z" fill="url(#dressGrad)"/>
+          <path d="M66 146 L134 146 L142 195 L58 195 Z" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>
+          <path d="M74 146 L74 138 M126 146 L126 138" stroke="#d97706" stroke-width="4" stroke-linecap="round"/>
+          <rect x="82" y="166" width="36" height="20" rx="4" fill="#fde68a" stroke="#b45309" stroke-width="1.5"/>
+          <line x1="82" y1="172" x2="118" y2="172" stroke="#9a3412" stroke-width="2.5" stroke-dasharray="4 3"/>
+          <rect x="89" y="122" width="22" height="22" rx="8" fill="#61331b"/>
+          <ellipse cx="100" cy="94" rx="33" ry="37" fill="url(#skinGrad)"/>
+          <ellipse cx="79" cy="103" rx="6" ry="4" fill="#ea580c" opacity="0.38"/>
+          <ellipse cx="121" cy="103" rx="6" ry="4" fill="#ea580c" opacity="0.38"/>
+          <path d="M66 72 Q100 58 134 72" stroke="#f59e0b" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <path d="M68 72 Q100 58 132 72" stroke="#fef3c7" stroke-width="2" stroke-dasharray="5 5" fill="none"/>
+          <circle cx="87" cy="95" r="4.5" fill="#1c1917"/>
+          <circle cx="113" cy="95" r="4.5" fill="#1c1917"/>
+          <circle cx="88.5" cy="93.5" r="1.6" fill="#ffffff"/>
+          <circle cx="114.5" cy="93.5" r="1.6" fill="#ffffff"/>
+          ${browMap[expression] || browMap.happy}
+          <path d="M100 94 L97 104 L103 104" stroke="#4a2511" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          ${mouthMap[expression] || mouthMap.happy}
+        </svg>`;
+      },
+
+      getDishDuoSVG() {
+        return `
+        <svg viewBox="0 0 280 185" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="dulangWood" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#a8551f"/>
+              <stop offset="50%" stop-color="#7c3510"/>
+              <stop offset="100%" stop-color="#4a1d06"/>
+            </linearGradient>
+            <radialGradient id="papedaGel" cx="42%" cy="35%" r="60%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+              <stop offset="55%" stop-color="#cbd5e1" stop-opacity="0.82"/>
+              <stop offset="100%" stop-color="#94a3b8" stop-opacity="0.9"/>
+            </radialGradient>
+            <radialGradient id="kuahKuningHD" cx="45%" cy="40%" r="58%">
+              <stop offset="0%" stop-color="#fef08a"/>
+              <stop offset="55%" stop-color="#facc15"/>
+              <stop offset="100%" stop-color="#ca8a04"/>
+            </radialGradient>
+            <linearGradient id="cookedFishHD" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="65%" stop-color="#fef3c7"/>
+              <stop offset="100%" stop-color="#fde68a"/>
+            </linearGradient>
+          </defs>
+          <!-- Drop Shadow -->
+          <rect x="14" y="34" width="252" height="136" rx="20" fill="rgba(0,0,0,0.35)"/>
+          <!-- Carved Wooden Dulang Platter -->
+          <rect x="12" y="26" width="256" height="136" rx="20" fill="url(#dulangWood)" stroke="#fbbf24" stroke-width="2.5"/>
+          <rect x="20" y="34" width="240" height="120" rx="14" fill="none" stroke="#fde68a" stroke-width="1.5" stroke-dasharray="7 4" opacity="0.7"/>
+
+          <!-- Left Bowl: Glossy Cooked Papeda -->
+          <circle cx="88" cy="96" r="51" fill="rgba(0,0,0,0.28)"/>
+          <circle cx="86" cy="93" r="50" fill="#fef3c7" stroke="#92400e" stroke-width="3"/>
+          <circle cx="86" cy="93" r="41" fill="#475569"/>
+          <!-- Translucent Glossy Papeda Mound -->
+          <path d="M54 90 Q68 62 96 66 Q120 72 116 98 Q108 122 76 118 Q50 112 54 90 Z" fill="url(#papedaGel)"/>
+          <!-- Specular Gloss Highlights on Papeda -->
+          <path d="M64 82 Q82 70 98 80" stroke="#ffffff" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.95"/>
+          <path d="M68 96 Q84 106 102 96" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+          <!-- Wooden Gata-Gata Chopsticks -->
+          <line x1="46" y1="48" x2="96" y2="92" stroke="#451a03" stroke-width="5" stroke-linecap="round"/>
+          <line x1="46" y1="48" x2="96" y2="92" stroke="#b45309" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="56" y1="42" x2="104" y2="86" stroke="#451a03" stroke-width="5" stroke-linecap="round"/>
+          <line x1="56" y1="42" x2="104" y2="86" stroke="#d97706" stroke-width="2.5" stroke-linecap="round"/>
+
+          <!-- Right Bowl: Steaming HD Ikan Kuah Kuning -->
+          <circle cx="194" cy="96" r="53" fill="rgba(0,0,0,0.28)"/>
+          <circle cx="192" cy="93" r="52" fill="#fffbeb" stroke="#92400e" stroke-width="3"/>
+          <circle cx="192" cy="93" r="43" fill="url(#kuahKuningHD)"/>
+          <!-- Glistening Turmeric Oil Droplets -->
+          <circle cx="166" cy="74" r="3.5" fill="#fef9c3" opacity="0.85"/>
+          <circle cx="218" cy="76" r="4" fill="#fef9c3" opacity="0.8"/>
+          <circle cx="172" cy="116" r="3" fill="#fef9c3" opacity="0.85"/>
+          <circle cx="216" cy="112" r="2.8" fill="#fef9c3" opacity="0.85"/>
+          <!-- Cooked Flaky Fish Fillets -->
+          <ellipse cx="184" cy="89" rx="24" ry="13" transform="rotate(-16 184 89)" fill="url(#cookedFishHD)" stroke="#d97706" stroke-width="1.5"/>
+          <path d="M168 92 Q182 85 198 84" stroke="#cbd5e1" stroke-width="1.8" fill="none"/>
+          <path d="M174 96 Q186 91 196 90" stroke="#cbd5e1" stroke-width="1.4" fill="none"/>
+          <ellipse cx="202" cy="105" rx="17" ry="10" transform="rotate(14 202 105)" fill="url(#cookedFishHD)" stroke="#d97706" stroke-width="1.5"/>
+          <path d="M191 103 L211 108" stroke="#cbd5e1" stroke-width="1.5"/>
+          <!-- Fresh Kemangi Leaves, Red Chili & Lime -->
+          <path d="M166 78 Q174 68 180 78 Q174 84 166 78 Z" fill="#16a34a"/>
+          <path d="M206 76 Q216 68 220 78 Q212 84 206 76 Z" fill="#15803d"/>
+          <ellipse cx="208" cy="118" rx="7" ry="3.5" transform="rotate(-20 208 118)" fill="#dc2626"/>
+          <circle cx="168" cy="110" r="7" fill="#84cc16" stroke="#fef08a" stroke-width="1.8"/>
+          <!-- Rising Steam Wisps -->
+          <path d="M178 46 Q173 36 179 26" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.65"/>
+          <path d="M198 44 Q203 34 197 24" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.65"/>
+        </svg>`;
+      }
+    };
+
+    /* ============================================================================
+       5. HD CANVAS PROCEDURAL GRAPHICS RENDERER ("BENERAN MATENG" SHADING)
+    ============================================================================ */
+    const HD_RENDER = {
+      drawWoodBoard(ctx, x, y, w, h) {
+        // Deep Contact Shadow
+        ctx.fillStyle = 'rgba(15, 6, 2, 0.38)';
+        ctx.beginPath();
+        ctx.roundRect(x + 5, y + 8, w, h, 24);
+        ctx.fill();
+
+        // 3D Thickness Edge
+        ctx.fillStyle = '#5c280a';
+        ctx.beginPath();
+        ctx.roundRect(x, y + 5, w, h, 22);
+        ctx.fill();
+
+        // Main Wood Surface Gradient
+        const grad = ctx.createLinearGradient(x, y, x, y + h);
+        grad.addColorStop(0, '#d47f3b');
+        grad.addColorStop(0.5, '#b05d1e');
+        grad.addColorStop(1, '#8c4210');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.roundRect(x, y, w, h, 22);
+        ctx.fill();
+
+        // Subtle Wood Grain Lines
+        ctx.save();
+        ctx.clip();
+        ctx.strokeStyle = 'rgba(69, 26, 3, 0.14)';
+        ctx.lineWidth = 2;
+        for (let i = 1; i <= 6; i++) {
+          const gy = y + (h / 7) * i;
+          ctx.beginPath();
+          ctx.moveTo(x, gy);
+          ctx.bezierCurveTo(x + w * 0.33, gy - 6, x + w * 0.66, gy + 6, x + w, gy);
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        // Inner Carved Rim
+        ctx.strokeStyle = 'rgba(254, 243, 199, 0.55)';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.roundRect(x + 6, y + 6, w - 12, h - 12, 18);
+        ctx.stroke();
+      },
+
+      drawDetailedFish(ctx, cx, cy, rx, ry, opts = {}) {
+        const { wetRatio = 0, limeRatio = 0, cuts = [] } = opts;
+
+        // Shadow on board
+        ctx.fillStyle = 'rgba(28, 12, 4, 0.32)';
+        ctx.beginPath();
+        ctx.ellipse(cx + 4, cy + 8, rx * 1.04, ry * 0.96, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Tail Fin
+        const tailGrad = ctx.createLinearGradient(cx + rx * 0.8, cy, cx + rx * 1.32, cy);
+        tailGrad.addColorStop(0, '#475569');
+        tailGrad.addColorStop(1, '#1e293b');
+        ctx.fillStyle = tailGrad;
+        ctx.beginPath();
+        ctx.moveTo(cx + rx * 0.82, cy);
+        ctx.lineTo(cx + rx * 1.32, cy - ry * 0.95);
+        ctx.quadraticCurveTo(cx + rx * 1.15, cy, cx + rx * 1.32, cy + ry * 0.95);
+        ctx.closePath();
+        ctx.fill();
+
+        // Dorsal & Belly Fins
+        ctx.fillStyle = '#64748b';
+        ctx.beginPath();
+        ctx.moveTo(cx - rx * 0.2, cy - ry * 0.88);
+        ctx.quadraticCurveTo(cx + rx * 0.15, cy - ry * 1.38, cx + rx * 0.45, cy - ry * 0.82);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(cx - rx * 0.1, cy + ry * 0.88);
+        ctx.quadraticCurveTo(cx + rx * 0.15, cy + ry * 1.28, cx + rx * 0.38, cy + ry * 0.84);
+        ctx.closePath();
+        ctx.fill();
+
+        // Main Fish Body Metallic Gradient
+        const bodyGrad = ctx.createLinearGradient(cx, cy - ry, cx, cy + ry);
+        bodyGrad.addColorStop(0, '#1e293b');
+        bodyGrad.addColorStop(0.32, '#64748b');
+        bodyGrad.addColorStop(0.65, '#cbd5e1');
+        bodyGrad.addColorStop(1, '#f8fafc');
+
+        ctx.fillStyle = bodyGrad;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Subtle Scale Mesh Texture
+        ctx.save();
+        ctx.clip();
+        ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+        ctx.lineWidth = 1.2;
+        for (let sx = cx - rx * 0.4; sx < cx + rx * 0.75; sx += 14) {
+          for (let sy = cy - ry * 0.6; sy < cy + ry * 0.6; sy += 12) {
+            ctx.beginPath();
+            ctx.arc(sx, sy, 7, -Math.PI * 0.4, Math.PI * 0.4);
+            ctx.stroke();
+          }
+        }
+
+        // Glistening Wet & Citrus Marinade Sheen
+        if (wetRatio > 0 || limeRatio > 0) {
+          const sheenAlpha = Math.min(0.55, wetRatio * 0.35 + limeRatio * 0.35);
+          const sheenGrad = ctx.createLinearGradient(cx - rx, cy - ry, cx + rx, cy);
+          sheenGrad.addColorStop(0, `rgba(255,255,255,${sheenAlpha})`);
+          sheenGrad.addColorStop(0.5, limeRatio > 0 ? `rgba(190, 242, 100, ${limeRatio * 0.45})` : `rgba(186, 230, 253, ${wetRatio * 0.4})`);
+          sheenGrad.addColorStop(1, 'rgba(255,255,255,0)');
+          ctx.fillStyle = sheenGrad;
+          ctx.fillRect(cx - rx, cy - ry, rx * 2, ry * 2);
+        }
+        ctx.restore();
+
+        // Gill Cover & Pectoral Fin
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.arc(cx - rx * 0.46, cy, ry * 0.64, -0.75, 0.75);
+        ctx.stroke();
+
+        // Glossy Fish Eye
+        ctx.fillStyle = '#fef08a';
+        ctx.beginPath();
+        ctx.arc(cx - rx * 0.68, cy - ry * 0.16, 7.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.arc(cx - rx * 0.68, cy - ry * 0.16, 4.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(cx - rx * 0.70, cy - ry * 0.22, 1.8, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Fresh Pink-White Flesh Cross-Section on Completed Cuts
+        cuts.forEach(c => {
+          if (c.done) {
+            const cutX = c.x * ENGINE.w;
+            ctx.fillStyle = '#fecdd3';
+            ctx.beginPath();
+            ctx.ellipse(cutX, cy, 4.5, ry * 0.88, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#be123c';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+          }
+        });
+      },
+
+      drawSpiceHD(ctx, w, h, cur) {
+        const cx = w * 0.5;
+        const cy = h * 0.54;
+
+        if (cur.mode === 'peel') {
+          // Shadow
+          ctx.fillStyle = 'rgba(0,0,0,0.28)';
+          ctx.beginPath();
+          ctx.ellipse(cx + 3, cy + 12, 46, 36, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Peeled Glossy Inner Bulb
+          const innerGrad = ctx.createRadialGradient(cx - 12, cy - 12, 6, cx, cy, 46);
+          if (cur.id === 'bamer') {
+            innerGrad.addColorStop(0, '#fbcfe8');
+            innerGrad.addColorStop(0.55, '#db2777');
+            innerGrad.addColorStop(1, '#831843');
+          } else {
+            innerGrad.addColorStop(0, '#ffffff');
+            innerGrad.addColorStop(0.7, '#fef3c7');
+            innerGrad.addColorStop(1, '#d6d3d1');
+          }
+          ctx.fillStyle = innerGrad;
+          ctx.beginPath();
+          ctx.ellipse(cx, cy, 44, 38, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Clove Crease Lines
+          ctx.strokeStyle = cur.id === 'bamer' ? 'rgba(131,24,67,0.35)' : 'rgba(168,162,158,0.45)';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(cx, cy, 24, -1.2, 1.2);
+          ctx.stroke();
+
+          // Specular Wet Shine
+          ctx.fillStyle = 'rgba(255,255,255,0.55)';
+          ctx.beginPath();
+          ctx.ellipse(cx - 14, cy - 14, 12, 6, -0.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Outer Papery Skin Layer (Fades as peeled)
+          const skinAlpha = Math.max(0, 1 - cur.progress / 100);
+          if (skinAlpha > 0.02) {
+            ctx.save();
+            ctx.globalAlpha = skinAlpha;
+            ctx.fillStyle = cur.id === 'bamer' ? '#9d174d' : '#e7e5e4';
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, 49, 43, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#78716c';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.restore();
+          }
+        } else {
+          // Slicing Mode (Kunyit, Jahe, Serai & Tomat)
+          const isPortrait = h > w;
+          const barW = isPortrait ? w * 0.56 : w * 0.42;
+          const barH = h * 0.13;
+          const startX = cx - barW * 0.5;
+          const topY = cy - barH * 0.5;
+
+          // Shadow
+          ctx.fillStyle = 'rgba(0,0,0,0.28)';
+          ctx.beginPath();
+          ctx.roundRect(startX + 4, topY + 7, barW, barH, 20);
+          ctx.fill();
+
+          // Rich 3D Gradient Body
+          const rootGrad = ctx.createLinearGradient(startX, topY, startX, topY + barH);
+          if (cur.id === 'kunyit') {
+            rootGrad.addColorStop(0, '#fbbf24');
+            rootGrad.addColorStop(0.5, '#ea580c');
+            rootGrad.addColorStop(1, '#9a3412');
+          } else if (cur.id === 'jahe') {
+            rootGrad.addColorStop(0, '#fde68a');
+            rootGrad.addColorStop(0.5, '#d97706');
+            rootGrad.addColorStop(1, '#78350f');
+          } else {
+            rootGrad.addColorStop(0, '#bef264');
+            rootGrad.addColorStop(0.5, '#65a30d');
+            rootGrad.addColorStop(1, '#365314');
+          }
+
+          ctx.fillStyle = rootGrad;
+          ctx.beginPath();
+          ctx.roundRect(startX, topY, barW, barH, 20);
+          ctx.fill();
+
+          // Top Specular Highlight
+          ctx.fillStyle = 'rgba(255,255,255,0.32)';
+          ctx.beginPath();
+          ctx.roundRect(startX + 10, topY + 4, barW - 20, barH * 0.26, 8);
+          ctx.fill();
+
+          // Cut Lines & Juicy Inner Cross-Sections
+          cur.cuts.forEach((cxNorm, i) => {
+            const cutX = cxNorm * w;
+            if (cur.cutDone[i]) {
+              ctx.fillStyle = cur.id === 'kunyit' ? '#facc15' : (cur.id === 'jahe' ? '#fef3c7' : '#ecfccb');
+              ctx.beginPath();
+              ctx.ellipse(cutX, cy, 4, barH * 0.48, 0, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.strokeStyle = '#451a03';
+              ctx.lineWidth = 1.5;
+              ctx.stroke();
+            } else {
+              ctx.strokeStyle = '#ffffff';
+              ctx.lineWidth = 4;
+              ctx.setLineDash([7, 5]);
+              ctx.beginPath();
+              ctx.moveTo(cutX, topY - 12);
+              ctx.lineTo(cutX, topY + barH + 12);
+              ctx.stroke();
+              ctx.setLineDash([]);
+            }
+          });
+        }
+      },
+
+      drawCobekHD(ctx, w, h, d) {
+        const cx = w * 0.5;
+        const cy = h * 0.54;
+        const cobekR = Math.min(Math.min(w, h) * 0.34, 124);
+
+        // Table Contact Shadow
+        ctx.fillStyle = 'rgba(15, 6, 2, 0.42)';
+        ctx.beginPath();
+        ctx.arc(cx + 5, cy + 10, cobekR * 1.02, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Volcanic Basalt Stone Outer Rim
+        const stoneOuter = ctx.createRadialGradient(cx - 25, cy - 25, 20, cx, cy, cobekR);
+        stoneOuter.addColorStop(0, '#57534e');
+        stoneOuter.addColorStop(0.7, '#292524');
+        stoneOuter.addColorStop(1, '#1c1917');
+        ctx.fillStyle = stoneOuter;
+        ctx.beginPath();
+        ctx.arc(cx, cy, cobekR, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Inner Mortar Basin
+        const basinGrad = ctx.createRadialGradient(cx + 15, cy + 15, 10, cx, cy, cobekR * 0.83);
+        basinGrad.addColorStop(0, '#44403c');
+        basinGrad.addColorStop(1, '#1c1917');
+        ctx.fillStyle = basinGrad;
+        ctx.beginPath();
+        ctx.arc(cx, cy, cobekR * 0.83, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Basalt Stone Speckles
+        ctx.fillStyle = 'rgba(255,255,255,0.08)';
+        for (let i = 0; i < 18; i++) {
+          const a = i * 2.1;
+          const r = (cobekR * 0.72) * ((i % 5) / 5);
+          ctx.beginPath();
+          ctx.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r, 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Spice Paste Transition (Chunky -> Smooth Glossy Golden Bumbu Halus)
+        const t = d.smoothness / 100;
+        const pasteR = cobekR * (0.28 + t * 0.32);
+        const pasteGrad = ctx.createRadialGradient(cx - 10, cy - 10, 5, cx, cy, pasteR);
+        pasteGrad.addColorStop(0, '#fde047');
+        pasteGrad.addColorStop(0.55, '#f59e0b');
+        pasteGrad.addColorStop(1, '#b45309');
+
+        ctx.fillStyle = pasteGrad;
+        ctx.beginPath();
+        ctx.arc(cx, cy, pasteR, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Glossy Oil Sheen on Smooth Paste
+        if (t > 0.35) {
+          ctx.fillStyle = `rgba(255, 255, 255, ${t * 0.45})`;
+          ctx.beginPath();
+          ctx.ellipse(cx - pasteR * 0.25, cy - pasteR * 0.25, pasteR * 0.35, pasteR * 0.16, -0.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Uncrushed Spice Chunks (Disappear as smoothness increases)
+        if (t < 0.85) {
+          const chunkCount = Math.ceil((1 - t) * 7);
+          for (let c = 0; c < chunkCount; c++) {
+            const ang = c * 1.4 + t * 4;
+            const dist = pasteR * 0.55;
+            ctx.fillStyle = c % 2 === 0 ? '#dc2626' : '#fef3c7';
+            ctx.beginPath();
+            ctx.arc(cx + Math.cos(ang) * dist, cy + Math.sin(ang) * dist, 5 * (1 - t * 0.6), 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        // 3D Stone Ulekan (Pestle)
+        const ux = d.ulekanX * w;
+        const uy = d.ulekanY * h;
+        ctx.fillStyle = 'rgba(0,0,0,0.42)';
+        ctx.beginPath();
+        ctx.roundRect(ux - 13, uy - 30, 32, 68, 15);
+        ctx.fill();
+
+        const ulekanGrad = ctx.createLinearGradient(ux - 16, uy, ux + 16, uy);
+        ulekanGrad.addColorStop(0, '#57534e');
+        ulekanGrad.addColorStop(0.4, '#292524');
+        ulekanGrad.addColorStop(1, '#0c0a09');
+        ctx.fillStyle = ulekanGrad;
+        ctx.beginPath();
+        ctx.roundRect(ux - 16, uy - 38, 32, 68, 15);
+        ctx.fill();
+        ctx.strokeStyle = '#78716c';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      },
+
+      drawCookingPotHD(ctx, w, h, d, animTime) {
+        const potR = Math.min(Math.min(w, h) * 0.31, 114);
+        const cx = w * 0.5;
+        const cy = h * 0.58;
+
+        // Stove Burner Base
+        ctx.fillStyle = '#1c1917';
+        ctx.beginPath();
+        ctx.arc(cx, cy, potR + 22, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Animated Gas Flame Ring (Blue-Orange Flames)
+        if (STATE.subStep >= 1) {
+          const heatLevel = STATE.subStep === 4 ? (d.heatTemp / 100) : 0.45;
+          const flameCount = 16;
+          for (let f = 0; f < flameCount; f++) {
+            const ang = (f / flameCount) * Math.PI * 2 + animTime * 2;
+            const flicker = Math.sin(animTime * 22 + f * 1.9) * 4;
+            const fLen = 10 + heatLevel * 18 + (d.holdingHeat ? flicker : 0);
+            const fx = cx + Math.cos(ang) * (potR + 4);
+            const fy = cy + Math.sin(ang) * (potR + 4);
+
+            ctx.fillStyle = (STATE.subStep === 4 && d.heatTemp > 74)
+              ? 'rgba(239, 68, 68, 0.82)'
+              : (d.holdingHeat ? 'rgba(249, 115, 22, 0.85)' : 'rgba(56, 189, 248, 0.65)');
+            ctx.beginPath();
+            ctx.arc(fx + Math.cos(ang) * (fLen * 0.45), fy + Math.sin(ang) * (fLen * 0.45), 6 + heatLevel * 4, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        // Pot Side Handles
+        ctx.fillStyle = '#1e293b';
+        ctx.beginPath();
+        ctx.roundRect(cx - potR - 18, cy - 16, 22, 32, 8);
+        ctx.roundRect(cx + potR - 4, cy - 16, 22, 32, 8);
+        ctx.fill();
+
+        // Brushed Metallic Pot Outer Rim
+        const rimGrad = ctx.createLinearGradient(cx - potR, cy - potR, cx + potR, cy + potR);
+        rimGrad.addColorStop(0, '#f8fafc');
+        rimGrad.addColorStop(0.5, '#94a3b8');
+        rimGrad.addColorStop(1, '#334155');
+        ctx.fillStyle = rimGrad;
+        ctx.beginPath();
+        ctx.arc(cx, cy, potR, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Interior Broth / Cooking Base
+        const innerR = potR * 0.86;
+        if (STATE.subStep >= 2) {
+          // Rich Turmeric Yellow Broth ("Kuah Kuning")
+          const brothGrad = ctx.createRadialGradient(cx - 18, cy - 18, 12, cx, cy, innerR);
+          brothGrad.addColorStop(0, '#fef08a');
+          brothGrad.addColorStop(0.55, '#facc15');
+          brothGrad.addColorStop(1, '#ca8a04');
+          ctx.fillStyle = brothGrad;
+          ctx.beginPath();
+          ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Glistening Golden Oil Droplets on Broth Surface
+          ctx.fillStyle = 'rgba(254, 249, 195, 0.72)';
+          const droplets = [
+            [-0.45, -0.35, 5], [0.48, -0.32, 6], [-0.38, 0.42, 4.5],
+            [0.42, 0.38, 5.5], [0.05, -0.55, 4], [-0.55, 0.05, 4.5]
+          ];
+          droplets.forEach(([dx, dy, dr], idx) => {
+            const ox = cx + dx * innerR + Math.sin(animTime * 1.5 + idx) * 2;
+            const oy = cy + dy * innerR + Math.cos(animTime * 1.5 + idx) * 2;
+            ctx.beginPath();
+            ctx.arc(ox, oy, dr, 0, Math.PI * 2);
+            ctx.fill();
+          });
+        } else {
+          // Pot Bottom + Oil + Sautéed Spice Paste
+          ctx.fillStyle = '#334155';
+          ctx.beginPath();
+          ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
+          ctx.fill();
+
+          if (d.oilAdded) {
+            ctx.fillStyle = 'rgba(254, 240, 138, 0.32)';
+            ctx.beginPath();
+            ctx.arc(cx, cy, innerR * 0.75, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          if (d.spiceAdded) {
+            const spiceGrad = ctx.createRadialGradient(cx, cy, 8, cx, cy, innerR * 0.55);
+            spiceGrad.addColorStop(0, '#facc15');
+            spiceGrad.addColorStop(1, '#b45309');
+            ctx.fillStyle = spiceGrad;
+            ctx.beginPath();
+            ctx.arc(cx, cy, innerR * 0.55, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        // Simmering Bubbles when Hot
+        if (STATE.subStep === 4 && d.heatTemp > 38) {
+          ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+          ctx.lineWidth = 2;
+          for (let b = 0; b < 7; b++) {
+            const bx = cx + Math.cos(animTime * 2.2 + b * 1.1) * (innerR * 0.55);
+            const by = cy + Math.sin(animTime * 2.6 + b * 1.5) * (innerR * 0.55);
+            const br = 3 + ((animTime * 12 + b * 3) % 7);
+            ctx.beginPath();
+            ctx.arc(bx, by, br, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+        }
+
+        // Fish Fillets Transitioning from Raw Pink-Grey to COOKED Flaky White-Gold ("Beneran Mateng")
+        if (d.fishAdded) {
+          const cookedRatio = STATE.subStep === 4 ? (d.simmerProgress / 100) : 0;
+          const drawCookedFillet = (fx, fy, frx, fry, rot) => {
+            ctx.save();
+            ctx.translate(fx, fy);
+            ctx.rotate(rot);
+
+            // Base Fillet Shape
+            const fGrad = ctx.createLinearGradient(-frx, -fry, frx, fry);
+            if (cookedRatio < 0.5) {
+              // Raw translucent pinkish-grey
+              fGrad.addColorStop(0, '#fbcfe8');
+              fGrad.addColorStop(1, '#cbd5e1');
+            } else {
+              // Cooked firm opaque white with golden turmeric edges!
+              fGrad.addColorStop(0, '#ffffff');
+              fGrad.addColorStop(0.7, '#fef9c3');
+              fGrad.addColorStop(1, '#fde047');
+            }
+
+            ctx.fillStyle = fGrad;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, frx, fry, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = cookedRatio > 0.5 ? '#ca8a04' : '#94a3b8';
+            ctx.lineWidth = 1.8;
+            ctx.stroke();
+
+            // Flaky Cooked Muscle Lines (Appear as fish cooks!)
+            if (cookedRatio > 0.25) {
+              ctx.strokeStyle = `rgba(148, 163, 184, ${cookedRatio * 0.75})`;
+              ctx.lineWidth = 1.6;
+              for (let l = -2; l <= 2; l++) {
+                ctx.beginPath();
+                ctx.moveTo(l * (frx * 0.32), -fry * 0.65);
+                ctx.quadraticCurveTo(l * (frx * 0.32) + 3, 0, l * (frx * 0.32), fry * 0.65);
+                ctx.stroke();
+              }
+            }
+            ctx.restore();
+          };
+
+          drawCookedFillet(cx - innerR * 0.22, cy - innerR * 0.12, innerR * 0.32, innerR * 0.17, -0.25);
+          drawCookedFillet(cx + innerR * 0.20, cy + innerR * 0.16, innerR * 0.28, innerR * 0.15, 0.28);
+        }
+
+        // Fresh Green Kemangi Leaves, Tomato Wedges & Chili Slices
+        if (d.herbAdded) {
+          // Kemangi Leaves
+          ctx.fillStyle = '#15803d';
+          [[-0.32, -0.34, 0.4], [0.34, -0.26, -0.5], [-0.15, 0.36, 0.8]].forEach(([lx, ly, rot]) => {
+            ctx.save();
+            ctx.translate(cx + lx * innerR, cy + ly * innerR);
+            ctx.rotate(rot);
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 11, 6, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          });
+          // Red Chili & Tomato
+          ctx.fillStyle = '#ef4444';
+          ctx.beginPath();
+          ctx.arc(cx + innerR * 0.36, cy - innerR * 0.05, 6, 0, Math.PI * 2);
+          ctx.arc(cx - innerR * 0.38, cy + innerR * 0.14, 5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      },
+
+      drawPapedaBowlHD(ctx, w, h, d) {
+        const bowlR = Math.min(Math.min(w, h) * 0.31, 116);
+        const cx = w * 0.5;
+        const cy = h * 0.58;
+
+        // Bowl Drop Shadow
+        ctx.fillStyle = 'rgba(15, 6, 2, 0.4)';
+        ctx.beginPath();
+        ctx.arc(cx + 5, cy + 9, bowlR * 1.02, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Traditional Carved Wooden / Terracotta Bowl Rim
+        const bowlRim = ctx.createRadialGradient(cx - 25, cy - 25, 15, cx, cy, bowlR);
+        bowlRim.addColorStop(0, '#fef3c7');
+        bowlRim.addColorStop(0.75, '#f59e0b');
+        bowlRim.addColorStop(1, '#92400e');
+        ctx.fillStyle = bowlRim;
+        ctx.beginPath();
+        ctx.arc(cx, cy, bowlR, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Dark Ceramic Bowl Interior
+        const innerR = bowlR * 0.84;
+        ctx.fillStyle = '#334155';
+        ctx.beginPath();
+        ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Sagu -> Milky Slurry -> GLOSSY TRANSLUCENT ELASTIC PAPEDA ("Beneran Mateng")
+        if (d.saguAdded) {
+          if (STATE.subStep <= 2) {
+            // Chalky White Sagu Powder / Slurry
+            const slurryGrad = ctx.createRadialGradient(cx - 15, cy - 15, 10, cx, cy, innerR * 0.94);
+            slurryGrad.addColorStop(0, '#ffffff');
+            slurryGrad.addColorStop(1, d.coldWaterPct > 20 ? '#e2e8f0' : '#cbd5e1');
+            ctx.fillStyle = slurryGrad;
+            ctx.beginPath();
+            ctx.arc(cx, cy, innerR * 0.94, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            // Dramatic Transformation to Glossy Translucent Gelatinous Papeda!
+            const g = STATE.subStep === 4 ? 1 : (d.gelPct / 100);
+            const papedaGrad = ctx.createRadialGradient(cx - 20, cy - 20, 8, cx, cy, innerR * 0.94);
+            if (g < 0.5) {
+              papedaGrad.addColorStop(0, '#ffffff');
+              papedaGrad.addColorStop(1, '#cbd5e1');
+            } else {
+              // Translucent glossy grey-pearl gel with depth
+              papedaGrad.addColorStop(0, 'rgba(255, 255, 255, 0.92)');
+              papedaGrad.addColorStop(0.45, 'rgba(203, 213, 225, 0.78)');
+              papedaGrad.addColorStop(1, 'rgba(100, 116, 139, 0.85)');
+            }
+
+            ctx.fillStyle = papedaGrad;
+            ctx.beginPath();
+            ctx.arc(cx, cy, innerR * 0.94, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Elastic Swirling Gelatinous Ribbons & Specular Gloss Highlights
+            if (g > 0.2) {
+              ctx.save();
+              ctx.strokeStyle = `rgba(255, 255, 255, ${0.4 + g * 0.55})`;
+              ctx.lineWidth = 4.5;
+              ctx.lineCap = 'round';
+              ctx.beginPath();
+              ctx.arc(cx, cy, innerR * 0.52, d.spoonAngle, d.spoonAngle + Math.PI * 1.35);
+              ctx.stroke();
+
+              ctx.lineWidth = 2.5;
+              ctx.beginPath();
+              ctx.arc(cx, cy, innerR * 0.28, d.spoonAngle + 1.2, d.spoonAngle + Math.PI * 2.1);
+              ctx.stroke();
+              ctx.restore();
+            }
+          }
+        }
+
+        // Stirring Spoon or Pair of Wooden Gata-Gata Chopsticks in Stage 5 SubStep 4
+        if (STATE.subStep === 1 || STATE.subStep === 3) {
+          const sx = cx + Math.cos(d.spoonAngle) * (innerR * 0.42);
+          const sy = cy + Math.sin(d.spoonAngle) * (innerR * 0.42);
+          ctx.strokeStyle = '#451a03';
+          ctx.lineWidth = 11;
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.moveTo(sx, sy);
+          ctx.lineTo(sx + 46, sy - 54);
+          ctx.stroke();
+          ctx.strokeStyle = '#b45309';
+          ctx.lineWidth = 5;
+          ctx.beginPath();
+          ctx.moveTo(sx, sy);
+          ctx.lineTo(sx + 46, sy - 54);
+          ctx.stroke();
+        } else if (STATE.subStep === 4) {
+          // Pair of Gata-Gata Chopsticks twirling a glossy Papeda ball!
+          const sx = cx + Math.cos(d.spoonAngle) * (innerR * 0.32);
+          const sy = cy + Math.sin(d.spoonAngle) * (innerR * 0.32);
+
+          // Glossy Papeda swirl wrapped around chopsticks
+          const rollR = 14 + (d.twirlPct / 100) * 14;
+          const rollGrad = ctx.createRadialGradient(sx - 4, sy - 4, 2, sx, sy, rollR);
+          rollGrad.addColorStop(0, '#ffffff');
+          rollGrad.addColorStop(0.6, 'rgba(226, 232, 240, 0.9)');
+          rollGrad.addColorStop(1, 'rgba(148, 163, 184, 0.85)');
+          ctx.fillStyle = rollGrad;
+          ctx.beginPath();
+          ctx.arc(sx, sy, rollR, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Two Gata-Gata Sticks
+          ctx.strokeStyle = '#78350f';
+          ctx.lineWidth = 6;
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.moveTo(sx - 6, sy);
+          ctx.lineTo(sx + 38, sy - 58);
+          ctx.moveTo(sx + 6, sy + 4);
+          ctx.lineTo(sx + 52, sy - 50);
+          ctx.stroke();
+        }
+      }
+    };
+
+    /* ============================================================================
+       6. UI & MODAL MANAGEMENT
+    ============================================================================ */
+    const UI = {
+      initVisuals() {
+        document.getElementById('menu-mama-illustration').innerHTML = ASSETS.getMamaSVG('happy');
+        document.getElementById('menu-dish-illustration').innerHTML = ASSETS.getDishDuoSVG();
+        document.getElementById('game-mama-avatar').innerHTML = ASSETS.getMamaSVG('happy');
+        document.getElementById('result-dish-visual').innerHTML = ASSETS.getDishDuoSVG();
+        document.getElementById('recipe-papeda-svg').innerHTML = ASSETS.getDishDuoSVG();
+        document.getElementById('recipe-fish-svg').innerHTML = ASSETS.getDishDuoSVG();
+        this.renderGallery();
+      },
+
+      showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        const target = document.getElementById(screenId);
+        if (target) target.classList.add('active');
+        STATE.screen = screenId.replace('screen-', '');
+        if (screenId === 'screen-game') {
+          ENGINE.resize();
+          requestAnimationFrame(() => ENGINE.resize());
+        }
+      },
+
+      openModal(modalId) {
+        AUDIO.sfx('pop');
+        document.getElementById(modalId).classList.add('active');
+        if (modalId === 'modal-tutorial') {
+          TUTORIAL.init();
+        } else if (modalId === 'modal-gallery') {
+          this.renderGallery();
+        }
+      },
+
+      closeModal(modalId) {
+        AUDIO.sfx('pop');
+        document.getElementById(modalId).classList.remove('active');
+      },
+
+      setMamaDialogue(text, expression = 'happy') {
+        const box = document.getElementById('mama-dialogue-text');
+        const avatar = document.getElementById('game-mama-avatar');
+        if (box) box.textContent = `"${text}"`;
+        if (avatar) {
+          avatar.innerHTML = ASSETS.getMamaSVG(expression);
+          avatar.classList.remove('speaking');
+          void avatar.offsetWidth;
+          avatar.classList.add('speaking');
+          setTimeout(() => avatar.classList.remove('speaking'), 1300);
+        }
+        AUDIO.sfx('talk');
+      },
+
+      setInstruction(text) {
+        const el = document.getElementById('stage-instruction-text');
+        if (el) el.textContent = text;
+      },
+
+      updateChecklist(items, activeIndex) {
+        const list = document.getElementById('stage-checklist');
+        if (!list) return;
+        list.innerHTML = items.map((label, idx) => {
+          const cls = idx < activeIndex ? 'done' : (idx === activeIndex ? 'active' : '');
+          const icon = idx < activeIndex ? '✅' : (idx === activeIndex ? '👉' : '⭕');
+          return `<div class="step-check-item ${cls}">${icon} <span>${label}</span></div>`;
+        }).join('');
+      },
+
+      updateHUD() {
+        const st = CONFIG.stages[STATE.stageIndex];
+        if (!st) return;
+        document.getElementById('hud-stage-name').textContent = st.name;
+        const overallPct = Math.round(((STATE.stageIndex) / CONFIG.stages.length) * 100);
+        document.getElementById('hud-stage-pct').textContent = `${overallPct}%`;
+        document.getElementById('hud-stage-fill').style.width = `${overallPct}%`;
+
+        const backdrop = document.getElementById('kitchen-backdrop');
+        if (st.closeup) backdrop.classList.add('camera-closeup');
+        else backdrop.classList.remove('camera-closeup');
+      },
+
+      setTaskMeter(label, pct) {
+        const clamped = Math.max(0, Math.min(100, Math.round(pct)));
+        document.getElementById('task-meter-label').textContent = label;
+        document.getElementById('task-meter-fill').style.width = `${clamped}%`;
+        document.getElementById('task-meter-val').textContent = `${clamped}%`;
+      },
+
+      toast(msg, isWarn = false) {
+        const el = document.getElementById('feedback-toast');
+        el.textContent = msg;
+        el.classList.toggle('warn', isWarn);
+        el.classList.add('show');
+        clearTimeout(this._toastTimer);
+        this._toastTimer = setTimeout(() => el.classList.remove('show'), 1600);
+      },
+
+      switchRecipeTab(tabName, btn) {
+        AUDIO.sfx('pop');
+        document.querySelectorAll('.recipe-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.recipe-tab-pane').forEach(p => p.style.display = 'none');
+        document.getElementById(`recipe-content-${tabName}`).style.display = 'block';
+      },
+
+      renderGallery() {
+        const container = document.getElementById('gallery-list-container');
+        const entries = STORAGE.getGallery();
+        if (!entries.length) {
+          container.innerHTML = `
+            <div style="grid-column:1/-1;text-align:center;padding:24px;background:#fff;border-radius:14px;border:1px dashed #d97706;">
+              <p style="font-weight:700;color:#78350f;">Belum ada masakan tersimpan di galeri.</p>
+              <p style="font-size:0.86rem;color:#6b4c3b;margin-top:4px;">Selesaikan sesi memasak Papeda & Ikan Kuah Kuning untuk menyimpan hasil kreasimu di sini!</p>
+            </div>`;
+          return;
+        }
+        container.innerHTML = entries.map((item, idx) => `
+          <div class="gallery-item">
+            <div class="gallery-thumb">${ASSETS.getDishDuoSVG()}</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <strong style="font-size:0.9rem;color:#451a03;">#${entries.length - idx} Papeda & Kuah Kuning</strong>
+              <span>${'⭐'.repeat(item.stars)}</span>
+            </div>
+            <div style="font-size:0.8rem;color:#573a28;">
+              Skor: <strong>${item.score}/100</strong> • Waktu: <strong>${item.timeStr}</strong>
+            </div>
+            <div style="font-size:0.75rem;color:#78350f;">${item.dateStr}</div>
+          </div>
+        `).join('');
+      },
+
+      openCertificate() {
+        CERT.syncFromLastResult();
+        this.openModal('modal-certificate');
+      }
+    };
+
+    /* ============================================================================
+       7. STORAGE & CERTIFICATE SYSTEM
+    ============================================================================ */
+    const STORAGE = {
+      KEY: 'papua_cooking_gallery_v1',
+      getGallery() {
+        try { return JSON.parse(localStorage.getItem(this.KEY) || '[]'); } catch (e) { return []; }
+      },
+      saveEntry(entry) {
+        try {
+          const list = this.getGallery();
+          list.unshift(entry);
+          localStorage.setItem(this.KEY, JSON.stringify(list.slice(0, 20)));
+        } catch (e) {}
+      },
+      clearGallery() {
+        localStorage.removeItem(this.KEY);
+        UI.renderGallery();
+        UI.toast('Riwayat galeri dibersihkan.');
+      }
+    };
+
+    const CERT = {
+      syncFromLastResult() {
+        const res = STATE.lastResult || {
+          score: 95,
+          stars: 3,
+          rank: 'Master Koki Papua',
+          dateStr: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+        };
+        document.getElementById('cert-stars-display').textContent = '⭐'.repeat(res.stars);
+        document.getElementById('cert-score-display').textContent = `${res.score} / 100`;
+        document.getElementById('cert-rank-display').textContent = res.rank;
+        document.getElementById('cert-date-display').textContent = `Tanggal: ${res.dateStr}`;
+      },
+      downloadPNG() {
+        const playerName = (document.getElementById('cert-player-name').value || 'Koki Muda Nusantara').trim();
+        const res = STATE.lastResult || { score: 95, stars: 3, rank: 'Master Koki Papua', dateStr: '2026' };
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 1000;
+        canvas.height = 680;
+        const ctx = canvas.getContext('2d');
+
+        const grad = ctx.createLinearGradient(0, 0, 1000, 680);
+        grad.addColorStop(0, '#fffdf7');
+        grad.addColorStop(1, '#fde68a');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 1000, 680);
+
+        ctx.strokeStyle = '#92400e';
+        ctx.lineWidth = 14;
+        ctx.strokeRect(24, 24, 952, 632);
+        ctx.strokeStyle = '#d97706';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(42, 42, 916, 596);
+
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#9a3412';
+        ctx.font = 'bold 22px sans-serif';
+        ctx.fillText('PAPUA COOKING ADVENTURE', 500, 105);
+
+        ctx.fillStyle = '#451a03';
+        ctx.font = '900 42px sans-serif';
+        ctx.fillText('SERTIFIKAT APRESIASI KULINER', 500, 160);
+
+        ctx.fillStyle = '#573a28';
+        ctx.font = '22px sans-serif';
+        ctx.fillText('Diberikan dengan bangga kepada:', 500, 220);
+
+        ctx.fillStyle = '#1c1917';
+        ctx.font = 'bold 44px serif';
+        ctx.fillText(playerName, 500, 285);
+
+        ctx.strokeStyle = '#b45309';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(240, 302);
+        ctx.lineTo(760, 302);
+        ctx.stroke();
+
+        ctx.fillStyle = '#451a03';
+        ctx.font = '21px sans-serif';
+        ctx.fillText('Telah menyelesaikan seluruh proses memasak hidangan tradisional Papua:', 500, 355);
+        ctx.font = 'bold 26px sans-serif';
+        ctx.fillStyle = '#b45309';
+        ctx.fillText('PAPEDA & IKAN KUAH KUNING', 500, 395);
+
+        ctx.fillStyle = '#15803d';
+        ctx.font = 'bold 24px sans-serif';
+        ctx.fillText(`Skor: ${res.score}/100  •  Bintang: ${'★'.repeat(res.stars)}  •  ${res.rank}`, 500, 455);
+
+        ctx.fillStyle = '#78350f';
+        ctx.font = '19px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Tanggal: ${res.dateStr}`, 90, 580);
+
+        ctx.textAlign = 'right';
+        ctx.font = 'italic bold 24px serif';
+        ctx.fillText('Mama Papua', 910, 555);
+        ctx.font = '18px sans-serif';
+        ctx.fillText('Instruktur Dapur Papua', 910, 582);
+
+        const link = document.createElement('a');
+        link.download = `Sertifikat-Papua-Cooking-${playerName.replace(/\s+/g, '-')}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        AUDIO.sfx('success');
+      }
+    };
+
+    /* ============================================================================
+       8. INTERACTIVE TUTORIAL ENGINE
+    ============================================================================ */
+    const TUTORIAL = {
+      step: 0,
+      dragging: false,
+      items: [],
+      rafRunning: false,
+
+      init() {
+        this.step = 0;
+        this.setupStep(0);
+        this.bindEvents();
+        if (!this.rafRunning) {
+          this.rafRunning = true;
+          this.loop();
+        }
+      },
+
+      reset() {
+        AUDIO.sfx('pop');
+        this.setupStep(this.step);
+      },
+
+      setupStep(idx) {
+        this.step = idx;
+        this.dragging = false;
+        document.querySelectorAll('.tut-pill').forEach((p, i) => {
+          p.classList.remove('active', 'done');
+          if (i < idx) p.classList.add('done');
+          if (i === idx) p.classList.add('active');
+        });
+
+        const pauseBtn = document.getElementById('tut-pause-demo-btn');
+        pauseBtn.style.display = idx === 3 ? 'inline-flex' : 'none';
+
+        const instructions = [
+          'Latihan 1 (Swipe): Usap melintasi 3 garis potong pada batang serai di papan!',
+          'Latihan 2 (Drag & Drop): Seret mangkuk sagu ke dalam lingkaran alas saji!',
+          'Latihan 3 (Mengaduk Melingkar): Putar sendok kayu di dalam mangkuk secara melingkar!',
+          'Latihan 4 (Pause & Kontrol): Tekan tombol "Uji Tombol Pause" di bawah untuk menyelesaikan tutorial!'
+        ];
+        document.getElementById('tutorial-instruction').textContent = instructions[idx];
+        document.getElementById('tutorial-status-msg').textContent = 'Lakukan gerakan sesuai petunjuk di atas.';
+
+        if (idx === 0) {
+          this.items = [{ x: 0.35, cut: false }, { x: 0.50, cut: false }, { x: 0.65, cut: false }];
+        } else if (idx === 1) {
+          this.items = [{ x: 0.25, y: 0.5, targetX: 0.72, targetY: 0.5, done: false }];
+        } else if (idx === 2) {
+          this.items = [{ angle: 0, totalSpin: 0 }];
+        }
+      },
+
+      triggerPauseDemo() {
+        if (this.step !== 3) return;
+        AUDIO.sfx('success');
+        document.getElementById('tutorial-status-msg').textContent = '🎉 Hebat! Semua teknik dasar sudah kamu kuasai!';
+        document.querySelectorAll('.tut-pill')[3].classList.add('done');
+      },
+
+      bindEvents() {
+        const canvas = document.getElementById('tutorial-canvas');
+        if (canvas._bound) return;
+        canvas._bound = true;
+
+        const getPos = (e) => {
+          const rect = canvas.getBoundingClientRect();
+          const pt = e.touches ? e.touches[0] : e;
+          return {
+            x: Math.max(0, Math.min(1, (pt.clientX - rect.left) / (rect.width || 1))),
+            y: Math.max(0, Math.min(1, (pt.clientY - rect.top) / (rect.height || 1)))
+          };
+        };
+
+        const onDown = (e) => { e.preventDefault(); this.dragging = true; };
+        const onMove = (e) => {
+          if (!this.dragging) return;
+          e.preventDefault();
+          const pos = getPos(e);
+
+          if (this.step === 0) {
+            this.items.forEach(line => {
+              if (!line.cut && Math.abs(pos.x - line.x) < 0.05 && pos.y > 0.2 && pos.y < 0.8) {
+                line.cut = true;
+                AUDIO.sfx('chop');
+              }
+            });
+            if (this.items.every(l => l.cut)) {
+              AUDIO.sfx('success');
+              setTimeout(() => this.setupStep(1), 400);
+            }
+          } else if (this.step === 1) {
+            const bowl = this.items[0];
+            if (!bowl.done) {
+              bowl.x = pos.x;
+              bowl.y = pos.y;
+              if (Math.hypot(bowl.x - bowl.targetX, bowl.y - bowl.targetY) < 0.12) {
+                bowl.x = bowl.targetX;
+                bowl.y = bowl.targetY;
+                bowl.done = true;
+                AUDIO.sfx('success');
+                setTimeout(() => this.setupStep(2), 400);
+              }
+            }
+          } else if (this.step === 2) {
+            const stir = this.items[0];
+            const dx = pos.x - 0.5;
+            const dy = pos.y - 0.5;
+            if (Math.hypot(dx, dy) < 0.4) {
+              const ang = Math.atan2(dy, dx);
+              let diff = ang - stir.angle;
+              while (diff > Math.PI) diff -= Math.PI * 2;
+              while (diff < -Math.PI) diff += Math.PI * 2;
+              stir.totalSpin += Math.abs(diff);
+              stir.angle = ang;
+              if (Math.random() < 0.2) AUDIO.sfx('stir');
+              if (stir.totalSpin > 8) {
+                AUDIO.sfx('success');
+                setTimeout(() => this.setupStep(3), 400);
+              }
+            }
+          }
+        };
+        const onUp = () => { this.dragging = false; };
+
+        canvas.addEventListener('mousedown', onDown);
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onUp);
+        canvas.addEventListener('touchstart', onDown, { passive: false });
+        canvas.addEventListener('touchmove', onMove, { passive: false });
+        canvas.addEventListener('touchend', onUp);
+      },
+
+      loop() {
+        const modal = document.getElementById('modal-tutorial');
+        if (!modal.classList.contains('active')) {
+          this.rafRunning = false;
+          return;
+        }
+
+        const canvas = document.getElementById('tutorial-canvas');
+        const rect = canvas.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0 && (canvas.width !== Math.round(rect.width) || canvas.height !== Math.round(rect.height))) {
+          canvas.width = Math.round(rect.width);
+          canvas.height = Math.round(rect.height);
+        }
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width;
+        const h = canvas.height;
+
+        ctx.clearRect(0, 0, w, h);
+        HD_RENDER.drawWoodBoard(ctx, w * 0.1, h * 0.12, w * 0.8, h * 0.76);
+
+        if (this.step === 0) {
+          ctx.fillStyle = '#84cc16';
+          ctx.beginPath();
+          ctx.roundRect(w * 0.22, h * 0.44, w * 0.56, h * 0.12, 16);
+          ctx.fill();
+
+          this.items.forEach(line => {
+            ctx.strokeStyle = line.cut ? '#22c55e' : '#fef08a';
+            ctx.lineWidth = 4;
+            ctx.setLineDash(line.cut ? [] : [8, 6]);
+            ctx.beginPath();
+            ctx.moveTo(w * line.x, h * 0.3);
+            ctx.lineTo(w * line.x, h * 0.7);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          });
+        } else if (this.step === 1) {
+          const b = this.items[0];
+          ctx.strokeStyle = '#fde68a';
+          ctx.lineWidth = 4;
+          ctx.setLineDash([8, 6]);
+          ctx.beginPath();
+          ctx.arc(w * b.targetX, h * b.targetY, 44, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = '#fef3c7';
+          ctx.font = 'bold 13px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('Taruh Sini', w * b.targetX, h * b.targetY + 5);
+
+          ctx.fillStyle = '#fff';
+          ctx.beginPath();
+          ctx.arc(w * b.x, h * b.y, 38, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#78350f';
+          ctx.fillText('Mangkuk', w * b.x, h * b.y + 5);
+        } else if (this.step === 2) {
+          const stir = this.items[0];
+          ctx.fillStyle = '#fef3c7';
+          ctx.beginPath();
+          ctx.arc(w * 0.5, h * 0.5, 68, 0, Math.PI * 2);
+          ctx.fill();
+
+          const pct = Math.min(100, Math.round((stir.totalSpin / 8) * 100));
+          ctx.fillStyle = '#78350f';
+          ctx.font = 'bold 16px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(`Aduk: ${pct}%`, w * 0.5, h * 0.5 + 6);
+
+          const sx = w * 0.5 + Math.cos(stir.angle) * 42;
+          const sy = h * 0.5 + Math.sin(stir.angle) * 42;
+          ctx.strokeStyle = '#7c2d12';
+          ctx.lineWidth = 10;
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.moveTo(sx, sy);
+          ctx.lineTo(sx + 38, sy - 42);
+          ctx.stroke();
+        } else if (this.step === 3) {
+          ctx.fillStyle = '#fef3c7';
+          ctx.font = 'bold 16px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('Klik tombol "Uji Tombol Pause" di bawah!', w * 0.5, h * 0.5);
+        }
+
+        requestAnimationFrame(() => this.loop());
+      }
+    };
+
+    /* ============================================================================
+       9. MAIN INTERACTIVE CANVAS COOKING ENGINE (MULTI-TOUCH SAFE)
+    ============================================================================ */
+    const ENGINE = {
+      canvas: null,
+      ctx: null,
+      w: 0,
+      h: 0,
+      animTime: 0,
+      pointer: {
+        x: 0.5, y: 0.5, down: false, touchId: null,
+        prevX: 0.5, prevY: 0.5, startX: 0.5, startY: 0.5
+      },
+      particles: [],
+      rafId: null,
+
+      init() {
+        this.canvas = document.getElementById('cooking-canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.bindPointerEvents();
+        this.bindHeatButton();
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+        this.startLoop();
+      },
+
+      resize() {
+        if (!this.canvas || !this.canvas.parentElement) return;
+        const rect = this.canvas.parentElement.getBoundingClientRect();
+        if (rect.width <= 0 || rect.height <= 0) return;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        this.w = rect.width;
+        this.h = rect.height;
+        this.canvas.width = Math.round(rect.width * dpr);
+        this.canvas.height = Math.round(rect.height * dpr);
+        this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        if (STATE.screen === 'game' && STATE.stageIndex === 0 && STATE.stageData.items) {
+          STAGES.layoutPrepGrid();
+        }
+      },
+
+      spawnParticles(nx, ny, color, count = 8, isSteam = false) {
+        if (this.w <= 0 || this.h <= 0) return;
+        for (let i = 0; i < count; i++) {
+          const ang = Math.random() * Math.PI * 2;
+          const spd = isSteam ? (0.4 + Math.random() * 1.1) : (1 + Math.random() * 3.5);
+          this.particles.push({
+            x: nx * this.w + (isSteam ? (Math.random() - 0.5) * 60 : 0),
+            y: ny * this.h,
+            vx: isSteam ? (Math.random() - 0.5) * 0.6 : Math.cos(ang) * spd,
+            vy: isSteam ? -(0.8 + Math.random() * 1.4) : (Math.sin(ang) * spd - 1.5),
+            r: isSteam ? (7 + Math.random() * 8) : (3 + Math.random() * 4),
+            color,
+            life: 1,
+            isSteam
+          });
+        }
+      },
+
+      bindHeatButton() {
+        const btn = document.getElementById('btn-hold-heat');
+        const setHold = (active) => {
+          if (STATE.paused || STATE.isTransitioning) {
+            STATE.stageData.holdingHeat = false;
+            btn.classList.remove('active-flame');
+            return;
+          }
+          STATE.stageData.holdingHeat = active;
+          btn.classList.toggle('active-flame', active);
+        };
+        btn.addEventListener('mousedown', (e) => { e.preventDefault(); e.stopPropagation(); setHold(true); });
+        window.addEventListener('mouseup', () => setHold(false));
+        window.addEventListener('blur', () => setHold(false));
+        btn.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); setHold(true); }, { passive: false });
+        btn.addEventListener('touchend', (e) => { e.preventDefault(); setHold(false); });
+        btn.addEventListener('touchcancel', () => setHold(false));
+      },
+
+      bindPointerEvents() {
+        const getClientPt = (e, touchId = null) => {
+          if (e.touches && e.touches.length > 0) {
+            if (touchId !== null) {
+              for (let i = 0; i < e.touches.length; i++) {
+                if (e.touches[i].identifier === touchId) return e.touches[i];
+              }
+            }
+            return e.touches[0];
+          }
+          return e;
+        };
+
+        const toNorm = (pt) => {
+          const rect = this.canvas.getBoundingClientRect();
+          return {
+            x: Math.max(0, Math.min(1, (pt.clientX - rect.left) / (rect.width || 1))),
+            y: Math.max(0, Math.min(1, (pt.clientY - rect.top) / (rect.height || 1)))
+          };
+        };
+
+        const handleStart = (e) => {
+          if (STATE.paused || STATE.isTransitioning || STATE.screen !== 'game') return;
+          if (this.pointer.down) return; // Ignore multi-touch secondary fingers
+          e.preventDefault();
+          AUDIO.init();
+
+          const pt = getClientPt(e);
+          this.pointer.touchId = e.changedTouches ? e.changedTouches[0].identifier : 'mouse';
+          const p = toNorm(pt);
+
+          this.pointer.down = true;
+          this.pointer.x = p.x;
+          this.pointer.y = p.y;
+          this.pointer.prevX = p.x;
+          this.pointer.prevY = p.y;
+          this.pointer.startX = p.x;
+          this.pointer.startY = p.y;
+          STAGES.onPointerDown(p.x, p.y);
+        };
+
+        const handleMove = (e) => {
+          if (!this.pointer.down || STATE.paused || STATE.isTransitioning || STATE.screen !== 'game') return;
+          const pt = getClientPt(e, this.pointer.touchId);
+          if (!pt) return;
+          e.preventDefault();
+
+          const p = toNorm(pt);
+          this.pointer.prevX = this.pointer.x;
+          this.pointer.prevY = this.pointer.y;
+          this.pointer.x = p.x;
+          this.pointer.y = p.y;
+          STAGES.onPointerMove(p.x, p.y, this.pointer.prevX, this.pointer.prevY);
+        };
+
+        const handleEnd = (e) => {
+          if (!this.pointer.down) return;
+          if (e.changedTouches && this.pointer.touchId !== 'mouse') {
+            let matched = false;
+            for (let i = 0; i < e.changedTouches.length; i++) {
+              if (e.changedTouches[i].identifier === this.pointer.touchId) matched = true;
+            }
+            if (!matched) return;
+          }
+          this.pointer.down = false;
+          this.pointer.touchId = null;
+          if (STATE.isTransitioning) return;
+          const movedDist = Math.hypot(this.pointer.x - this.pointer.startX, this.pointer.y - this.pointer.startY);
+          STAGES.onPointerUp(this.pointer.x, this.pointer.y, movedDist < 0.025);
+        };
+
+        this.canvas.addEventListener('mousedown', handleStart);
+        window.addEventListener('mousemove', handleMove);
+        window.addEventListener('mouseup', handleEnd);
+        this.canvas.addEventListener('touchstart', handleStart, { passive: false });
+        this.canvas.addEventListener('touchmove', handleMove, { passive: false });
+        this.canvas.addEventListener('touchend', handleEnd);
+        this.canvas.addEventListener('touchcancel', handleEnd);
+      },
+
+      startLoop() {
+        let lastTime = performance.now();
+        const frame = (now) => {
+          const dt = Math.min((now - lastTime) / 1000, 0.05);
+          lastTime = now;
+          this.animTime += dt;
+
+          if (STATE.screen === 'game') {
+            if (this.canvas && this.canvas.parentElement) {
+              const r = this.canvas.parentElement.getBoundingClientRect();
+              if (r.width > 0 && r.height > 0 && (Math.abs(r.width - this.w) > 2 || Math.abs(r.height - this.h) > 2)) {
+                this.resize();
+              }
+            }
+            if (!STATE.paused && !STATE.isTransitioning) {
+              STAGES.update(dt);
+            }
+          }
+          this.render();
+          this.rafId = requestAnimationFrame(frame);
+        };
+        this.rafId = requestAnimationFrame(frame);
+      },
+
+      render() {
+        const ctx = this.ctx;
+        if (!ctx || this.w <= 0 || this.h <= 0) return;
+        ctx.clearRect(0, 0, this.w, this.h);
+
+        if (STATE.screen === 'game') {
+          STAGES.render(ctx, this.w, this.h, this.animTime);
+        }
+
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+          const pt = this.particles[i];
+          pt.x += pt.vx;
+          pt.y += pt.vy;
+          if (!pt.isSteam) pt.vy += 0.08;
+          else pt.r += 0.12;
+          pt.life -= pt.isSteam ? 0.018 : 0.028;
+          if (pt.life <= 0) {
+            this.particles.splice(i, 1);
+            continue;
+          }
+          ctx.globalAlpha = pt.isSteam ? pt.life * 0.45 : pt.life;
+          ctx.fillStyle = pt.color;
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+      }
+    };
+
+    /* ============================================================================
+       10. ALL 7 COOKING STAGES (HD VISUALS & STRICT TRANSITION LOCKS)
+    ============================================================================ */
+    const STAGES = {
+      loadStage(index) {
+        STATE.clearScheduled();
+        STATE.isTransitioning = false;
+        STATE.stageIndex = index;
+        STATE.subStep = 0;
+        ENGINE.particles = [];
+        document.getElementById('heat-meter-card').style.display = 'none';
+        const heatBtn = document.getElementById('btn-hold-heat');
+        heatBtn.classList.remove('visible', 'active-flame');
+        UI.updateHUD();
+
+        switch (index) {
+          case 0: this.initStage0_Prep(); break;
+          case 1: this.initStage1_Fish(); break;
+          case 2: this.initStage2_Chop(); break;
+          case 3: this.initStage3_Grind(); break;
+          case 4: this.initStage4_CookFish(); break;
+          case 5: this.initStage5_Papeda(); break;
+          case 6: this.initStage6_Plating(); break;
+          default: APP.finishGame(); break;
+        }
+      },
+
+      retryCurrentStage() {
+        STATE.clearScheduled();
+        STATE.isTransitioning = false;
+        AUDIO.sfx('pop');
+        UI.toast('Mengulang tahap ini dari awal...');
+        this.loadStage(STATE.stageIndex);
+      },
+
+      advanceSubStep(setupFn) {
+        if (STATE.isTransitioning) return;
+        STATE.isTransitioning = true;
+        STATE.stageData.holdingHeat = false;
+        document.getElementById('btn-hold-heat').classList.remove('active-flame');
+        AUDIO.sfx('success');
+        ENGINE.spawnParticles(0.5, 0.5, '#fde047', 14);
+        STATE.schedule(() => {
+          STATE.isTransitioning = false;
+          setupFn();
+        }, 420);
+      },
+
+      completeStage() {
+        if (STATE.isTransitioning) return;
+        STATE.isTransitioning = true;
+        STATE.stageData.holdingHeat = false;
+        document.getElementById('btn-hold-heat').classList.remove('active-flame');
+        AUDIO.sfx('success');
+        ENGINE.spawnParticles(0.5, 0.45, '#fbbf24', 26);
+        const nextIdx = STATE.stageIndex + 1;
+        STATE.schedule(() => {
+          this.loadStage(nextIdx);
+        }, 750);
+      },
+
+      /* -------------------- STAGE 1: PERSIAPAN BAHAN -------------------- */
+      initStage0_Prep() {
+        UI.setMamaDialogue('Ayo pilih 12 bahan asli Papeda & Ikan Kuah Kuning ke baki persiapan di bawah!', 'happy');
+        UI.setInstruction('Seret ATAU ketuk langsung 12 bahan yang dibutuhkan ke Baki Persiapan. Hindari bahan pengecoh!');
+        UI.updateChecklist(['Pilih 12 Bahan Utama Papeda & Ikan Kuah Kuning'], 0);
+
+        const items = CONFIG.prepIngredients.map(ing => ({
+          ...ing,
+          homeX: 0.5,
+          homeY: 0.3,
+          x: 0.5,
+          y: 0.3,
+          collected: false
+        }));
+
+        STATE.stageData = {
+          items,
+          dragged: null,
+          collectedCount: 0,
+          totalRequired: items.filter(i => i.required).length
+        };
+        this.layoutPrepGrid();
+        UI.setTaskMeter('Bahan Terkumpul:', 0);
+      },
+
+      layoutPrepGrid() {
+        const d = STATE.stageData;
+        if (!d || !d.items) return;
+        const isPortrait = ENGINE.h > ENGINE.w;
+        const cols = isPortrait ? 4 : 7;
+        const rows = Math.ceil(d.items.length / cols);
+
+        const startX = isPortrait ? 0.14 : 0.09;
+        const endX = isPortrait ? 0.86 : 0.91;
+        const startY = isPortrait ? 0.19 : 0.22;
+        const endY = isPortrait ? 0.61 : 0.50;
+
+        d.items.forEach((it, i) => {
+          const r = Math.floor(i / cols);
+          const c = i % cols;
+          const itemsInThisRow = (r === rows - 1 && d.items.length % cols !== 0) ? (d.items.length % cols) : cols;
+          const rowOffset = (cols - itemsInThisRow) * ((endX - startX) / Math.max(1, cols - 1)) * 0.5;
+          const hx = startX + rowOffset + c * ((endX - startX) / Math.max(1, cols - 1));
+          const hy = startY + r * ((endY - startY) / Math.max(1, rows - 1));
+          it.homeX = hx;
+          it.homeY = hy;
+          if (!it.collected && d.dragged !== it) {
+            it.x = hx;
+            it.y = hy;
+          }
+        });
+      },
+
+      collectPrepItem(item) {
+        if (STATE.isTransitioning || item.collected) return;
+        const d = STATE.stageData;
+        item.collected = true;
+        d.dragged = null;
+        d.collectedCount++;
+        AUDIO.sfx('pop');
+        ENGINE.spawnParticles(0.5, 0.82, '#22c55e', 10);
+        const pct = (d.collectedCount / d.totalRequired) * 100;
+        UI.setTaskMeter('Bahan Terkumpul:', pct);
+        UI.toast(`${item.name} siap! (${d.collectedCount}/${d.totalRequired})`);
+        if (d.collectedCount >= d.totalRequired) {
+          UI.setMamaDialogue('Semua bahan lengkap! Sekarang kita bersihkan ikan segarnya.', 'proud');
+          this.completeStage();
+        }
+      },
+
+      /* -------------------- STAGE 2: MEMBERSIHKAN IKAN -------------------- */
+      initStage1_Fish() {
+        UI.setMamaDialogue('Ikan segar harus dibersihkan sisiknya, dibilas, dipotong 4 bagian, lalu diberi jeruk nipis!', 'happy');
+        this.setupFishSubStep(0);
+      },
+
+      setupFishSubStep(sub) {
+        STATE.subStep = sub;
+        UI.updateChecklist([
+          'Bersihkan sisik ikan (Swipe)',
+          'Bilas ikan dengan air bersih',
+          'Potong ikan menjadi 4 bagian',
+          'Peras jeruk nipis di atas ikan'
+        ], sub);
+
+        if (sub === 0) {
+          UI.setInstruction('Usap (swipe) bolak-balik pada tubuh ikan untuk membersihkan sisik-sisiknya!');
+          const spots = [];
+          for (let i = 0; i < 10; i++) {
+            spots.push({ x: 0.34 + (i % 5) * 0.075, y: 0.48 + Math.floor(i / 5) * 0.08, clean: false });
+          }
+          STATE.stageData = { spots, rinsePct: 0, cuts: [], limePct: 0, toolX: 0.22, toolY: 0.30 };
+          UI.setTaskMeter('Kebersihan Sisik:', 0);
+        } else if (sub === 1) {
+          UI.setMamaDialogue('Sisik sudah bersih! Sekarang seret gayung air ke atas ikan untuk membilasnya.', 'happy');
+          UI.setInstruction('Seret dan gerakkan Gayung Air di atas ikan hingga bilasan 100%!');
+          STATE.stageData.rinsePct = 0;
+          STATE.stageData.toolX = 0.22;
+          STATE.stageData.toolY = 0.30;
+          UI.setTaskMeter('Bilasan Air:', 0);
+        } else if (sub === 2) {
+          UI.setMamaDialogue('Bagus! Sekarang potong ikan mengikuti 3 garis potong menjadi 4 potongan.', 'happy');
+          UI.setInstruction('Swipe vertikal memotong 3 garis putus-putus pada tubuh ikan!');
+          STATE.stageData.cuts = [
+            { x: 0.40, done: false },
+            { x: 0.50, done: false },
+            { x: 0.60, done: false }
+          ];
+          UI.setTaskMeter('Potongan Ikan:', 0);
+        } else if (sub === 3) {
+          UI.setMamaDialogue('Terakhir, beri perasan jeruk nipis agar ikan harum dan tidak amis!', 'proud');
+          UI.setInstruction('Seret dan gosok potongan Jeruk Nipis di atas ikan!');
+          STATE.stageData.limePct = 0;
+          STATE.stageData.toolX = 0.76;
+          STATE.stageData.toolY = 0.30;
+          UI.setTaskMeter('Marinasi Jeruk Nipis:', 0);
+        }
+      },
+
+      /* -------------------- STAGE 3: MENYIAPKAN & MEMOTONG BUMBU -------------------- */
+      initStage2_Chop() {
+        UI.setMamaDialogue('Mari kita kupas bawang dan iris halus kunyit, jahe, serai, serta tomat!', 'happy');
+        const queue = [
+          { id: 'bamer', name: 'Bawang Merah (Kupas)', mode: 'peel', color: '#be185d', skin: '#f472b6', progress: 0 },
+          { id: 'baput', name: 'Bawang Putih (Kupas)', mode: 'peel', color: '#fef3c7', skin: '#d6d3d1', progress: 0 },
+          { id: 'kunyit', name: 'Kunyit Segar (Iris)', mode: 'slice', color: '#f59e0b', cuts: [0.35, 0.45, 0.55, 0.65], cutDone: [false,false,false,false] },
+          { id: 'jahe', name: 'Jahe (Iris)', mode: 'slice', color: '#d97706', cuts: [0.38, 0.50, 0.62], cutDone: [false,false,false] },
+          { id: 'serai', name: 'Serai & Tomat (Potong)', mode: 'slice', color: '#84cc16', cuts: [0.35, 0.45, 0.55, 0.65], cutDone: [false,false,false,false] }
+        ];
+        STATE.stageData = { queue, idx: 0, accuracySum: 0, accuracyCount: 0, knifeX: 0.5, knifeY: 0.3 };
+        this.updateChopSubStep();
+      },
+
+      updateChopSubStep() {
+        const d = STATE.stageData;
+        const cur = d.queue[d.idx];
+        UI.updateChecklist(d.queue.map(q => q.name), d.idx);
+        if (cur.mode === 'peel') {
+          UI.setInstruction(`Usap (swipe) kulit luar ${cur.name} hingga terkelupas bersih!`);
+        } else {
+          UI.setInstruction(`Swipe memotong ${cur.name} tepat pada garis putus-putus!`);
+        }
+        UI.setTaskMeter('Bumbu Siap:', (d.idx / d.queue.length) * 100);
+      },
+
+      /* -------------------- STAGE 4: MENGHALUSKAN BUMBU (COBEK) -------------------- */
+      initStage3_Grind() {
+        UI.setMamaDialogue('Sekarang ulek kunyit, bawang, dan jahe di cobek batu sampai halus merata!', 'happy');
+        UI.setInstruction('Seret ulekan dengan gerakan melingkar di dalam cobek hingga kehalusan 100%!');
+        UI.updateChecklist(['Haluskan Bumbu Kuning di Cobek'], 0);
+        STATE.stageData = {
+          smoothness: 0,
+          ulekanX: 0.5,
+          ulekanY: 0.52,
+          lastAngle: 0
+        };
+        UI.setTaskMeter('Tingkat Kehalusan:', 0);
+      },
+
+      /* -------------------- STAGE 5: MEMASAK IKAN KUAH KUNING -------------------- */
+      initStage4_CookFish() {
+        UI.setMamaDialogue('Waktunya menyalakan tungku! Kita tumis bumbu halus sampai harum dulu ya.', 'happy');
+        this.setupCookFishSubStep(0);
+      },
+
+      setupCookFishSubStep(sub) {
+        STATE.subStep = sub;
+        UI.updateChecklist([
+          'Tuang minyak & bumbu halus',
+          'Tumis bumbu & serai (Aduk)',
+          'Tuang air bersih ke panci',
+          'Masukkan ikan, garam & kemangi',
+          'Jaga suhu api hingga ikan matang'
+        ], sub);
+
+        const heatCard = document.getElementById('heat-meter-card');
+        const heatBtn = document.getElementById('btn-hold-heat');
+        heatCard.style.display = 'none';
+        heatBtn.classList.remove('visible', 'active-flame');
+        if (STATE.stageData) STATE.stageData.holdingHeat = false;
+
+        if (sub === 0) {
+          UI.setInstruction('Seret (atau ketuk) Botol Minyak lalu Mangkuk Bumbu Halus ke dalam panci!');
+          STATE.stageData = {
+            oilAdded: false, spiceAdded: false, stirPct: 0, waterPct: 0,
+            fishAdded: false, herbAdded: false,
+            heatTemp: 32, holdingHeat: false, simmerProgress: 0, goodHeatTime: 0, totalSimmerTime: 0,
+            lastHintTime: 0,
+            dragItem: null,
+            spoonAngle: 0,
+            oilPos: { x: 0.22, y: 0.25 },
+            spicePos: { x: 0.78, y: 0.25 },
+            waterPos: { x: 0.22, y: 0.25 },
+            fishPos: { x: 0.22, y: 0.25 },
+            herbPos: { x: 0.78, y: 0.25 }
+          };
+          UI.setTaskMeter('Persiapan Tumis:', 0);
+        } else if (sub === 1) {
+          UI.setMamaDialogue('Aduk bumbu halus, serai, dan daun salam secara melingkar sampai harum!', 'happy');
+          UI.setInstruction('Putar jari/kursor di dalam panci secara melingkar untuk menumis bumbu!');
+          UI.setTaskMeter('Keharuman Tumisan:', 0);
+        } else if (sub === 2) {
+          UI.setMamaDialogue('Bumbu sudah harum! Sekarang tuangkan air bersih ke dalam panci.', 'proud');
+          UI.setInstruction('Seret Teko Air ke atas panci dan gerakkan hingga kuah terisi penuh!');
+          UI.setTaskMeter('Volume Kuah:', 0);
+        } else if (sub === 3) {
+          UI.setMamaDialogue('Masukkan potongan ikan segar, garam, tomat, dan daun kemangi ke kuah kuning!', 'happy');
+          UI.setInstruction('Seret (atau ketuk) Piring Ikan dan Kemangi & Garam ke dalam panci!');
+          UI.setTaskMeter('Isian Kuah:', 0);
+        } else if (sub === 4) {
+          UI.setMamaDialogue('Tahan tombol API KOMPOR secara berkala agar jarum suhu tetap di zona HIJAU!', 'happy');
+          UI.setInstruction('Tekan & tahan tombol TAHAN API KOMPOR agar suhu berada di zona hijau sampai ikan matang!');
+          heatCard.style.display = 'flex';
+          heatBtn.classList.add('visible');
+          UI.setTaskMeter('Kematangan Ikan:', 0);
+        }
+      },
+
+      /* -------------------- STAGE 6: MEMBUAT PAPEDA -------------------- */
+      initStage5_Papeda() {
+        UI.setMamaDialogue('Ikan Kuah Kuning sudah matang! Sekarang kita buat Papeda dari tepung sagu asli.', 'proud');
+        this.setupPapedaSubStep(0);
+      },
+
+      setupPapedaSubStep(sub) {
+        STATE.subStep = sub;
+        UI.updateChecklist([
+          'Masukkan tepung sagu & garam',
+          'Tuang air dingin & aduk larut',
+          'Tuang air mendidih bertahap',
+          'Aduk cepat hingga bening kenyal',
+          'Gulung Papeda dengan gata-gata'
+        ], sub);
+
+        if (sub === 0) {
+          UI.setInstruction('Seret (atau ketuk) Tepung Sagu dan Garam ke dalam mangkuk besar!');
+          STATE.stageData = {
+            saguAdded: false, garamAdded: false,
+            coldWaterPct: 0, coldStirPct: 0,
+            hotWaterPct: 0, gelPct: 0, twirlPct: 0,
+            saguPos: { x: 0.22, y: 0.25 },
+            garamPos: { x: 0.78, y: 0.25 },
+            waterPos: { x: 0.22, y: 0.25 },
+            kettlePos: { x: 0.78, y: 0.25 },
+            dragItem: null,
+            spoonAngle: 0
+          };
+          UI.setTaskMeter('Bahan Sagu:', 0);
+        } else if (sub === 1) {
+          UI.setMamaDialogue('Tuang air dingin dulu untuk melarutkan sagu, lalu aduk sampai tidak menggumpal.', 'happy');
+          UI.setInstruction('Seret Teko Air Dingin ke mangkuk, lalu aduk melingkar!');
+          UI.setTaskMeter('Larutan Sagu:', 0);
+        } else if (sub === 2) {
+          UI.setMamaDialogue('Sekarang tuangkan air yang benar-benar mendidih ke larutan sagu!', 'happy');
+          UI.setInstruction('Seret Ceret Air Panas ke atas mangkuk sampai penuh!');
+          UI.setTaskMeter('Air Mendidih:', 0);
+        } else if (sub === 3) {
+          UI.setMamaDialogue('Ayo aduk cepat dan terus-menerus sampai sagu berubah bening mengkilap!', 'proud');
+          UI.setInstruction('Putar sendok kayu cepat secara melingkar hingga tekstur Papeda 100%!');
+          UI.setTaskMeter('Tekstur Papeda:', 0);
+        } else if (sub === 4) {
+          UI.setMamaDialogue('Wah bening sekali! Gulung Papeda memakai gata-gata ke mangkuk saji.', 'proud');
+          UI.setInstruction('Putar sumpit kayu gata-gata untuk menggulung Papeda ke mangkuk saji!');
+          UI.setTaskMeter('Gulungan Papeda:', 0);
+        }
+      },
+
+      /* -------------------- STAGE 7: PENYAJIAN MAKANAN (PLATING) -------------------- */
+      initStage6_Plating() {
+        UI.setMamaDialogue('Saatnya menata hidangan! Susun Papeda, Ikan Kuah Kuning, dan pelengkapnya dengan cantik!', 'proud');
+        UI.setInstruction('Seret (atau ketuk) Mangkuk Papeda, Ikan Kuah Kuning, Kemangi, dan Jeruk Nipis ke meja saji!');
+        UI.updateChecklist([
+          'Letakkan Mangkuk Papeda',
+          'Sajikan Ikan Kuah Kuning',
+          'Tambahkan Pelengkap Segar'
+        ], 0);
+
+        STATE.stageData = {
+          items: [
+            { id: 'papeda', name: 'Mangkuk Papeda', x: 0.22, y: 0.23, targetX: 0.35, targetY: 0.54, placed: false },
+            { id: 'ikan', name: 'Ikan Kuah Kuning', x: 0.78, y: 0.23, targetX: 0.65, targetY: 0.54, placed: false },
+            { id: 'kemangi', name: 'Daun Kemangi', x: 0.24, y: 0.84, targetX: 0.62, targetY: 0.46, placed: false },
+            { id: 'jeruk', name: 'Jeruk & Cabai', x: 0.76, y: 0.84, targetX: 0.68, targetY: 0.61, placed: false }
+          ],
+          dragged: null
+        };
+        UI.setTaskMeter('Kelengkapan Sajian:', 0);
+      },
+
+      /* ============================================================================
+         POINTER INTERACTION ROUTER
+      ============================================================================ */
+      onPointerDown(nx, ny) {
+        if (STATE.isTransitioning) return;
+        const d = STATE.stageData;
+        if (STATE.stageIndex === 0) {
+          for (let i = d.items.length - 1; i >= 0; i--) {
+            const it = d.items[i];
+            if (!it.collected && Math.hypot(nx - it.x, ny - it.y) < 0.085) {
+              if (!it.required) {
+                AUDIO.sfx('warn');
+                UI.toast(it.hint, true);
+                UI.setMamaDialogue(it.hint, 'warn');
+                STATE.scores.chopping = Math.max(70, STATE.scores.chopping - 2);
+                return;
+              }
+              d.dragged = it;
+              AUDIO.sfx('pop');
+              break;
+            }
+          }
+        } else if (STATE.stageIndex === 4) {
+          if (STATE.subStep === 0) {
+            if (!d.oilAdded && Math.hypot(nx - d.oilPos.x, ny - d.oilPos.y) < 0.12) d.dragItem = 'oil';
+            else if (!d.spiceAdded && Math.hypot(nx - d.spicePos.x, ny - d.spicePos.y) < 0.12) d.dragItem = 'spice';
+          } else if (STATE.subStep === 2) {
+            if (Math.hypot(nx - d.waterPos.x, ny - d.waterPos.y) < 0.14) d.dragItem = 'water';
+          } else if (STATE.subStep === 3) {
+            if (!d.fishAdded && Math.hypot(nx - d.fishPos.x, ny - d.fishPos.y) < 0.12) d.dragItem = 'fish';
+            else if (!d.herbAdded && Math.hypot(nx - d.herbPos.x, ny - d.herbPos.y) < 0.12) d.dragItem = 'herb';
+          }
+        } else if (STATE.stageIndex === 5) {
+          if (STATE.subStep === 0) {
+            if (!d.saguAdded && Math.hypot(nx - d.saguPos.x, ny - d.saguPos.y) < 0.12) d.dragItem = 'sagu';
+            else if (!d.garamAdded && Math.hypot(nx - d.garamPos.x, ny - d.garamPos.y) < 0.12) d.dragItem = 'garam';
+          } else if (STATE.subStep === 1 && d.coldWaterPct < 100) {
+            if (Math.hypot(nx - d.waterPos.x, ny - d.waterPos.y) < 0.14) d.dragItem = 'coldWater';
+          } else if (STATE.subStep === 2) {
+            if (Math.hypot(nx - d.kettlePos.x, ny - d.kettlePos.y) < 0.14) d.dragItem = 'kettle';
+          }
+        } else if (STATE.stageIndex === 6) {
+          for (let i = d.items.length - 1; i >= 0; i--) {
+            const it = d.items[i];
+            if (!it.placed && Math.hypot(nx - it.x, ny - it.y) < 0.11) {
+              d.dragged = it;
+              AUDIO.sfx('pop');
+              break;
+            }
+          }
+        }
+      },
+
+      onPointerMove(nx, ny, px, py) {
+        if (STATE.isTransitioning) return;
+        const d = STATE.stageData;
+        const dist = Math.hypot(nx - px, ny - py);
+
+        // STAGE 0: Drag ingredients to bottom prep tray
+        if (STATE.stageIndex === 0 && d.dragged) {
+          d.dragged.x = nx;
+          d.dragged.y = ny;
+          if (ny > 0.66 && Math.abs(nx - 0.5) < 0.36) {
+            this.collectPrepItem(d.dragged);
+          }
+        }
+
+        // STAGE 1: Fish cleaning
+        else if (STATE.stageIndex === 1) {
+          if (STATE.subStep === 0) {
+            d.toolX = nx; d.toolY = ny;
+            let newlyClean = false;
+            d.spots.forEach(sp => {
+              if (!sp.clean && Math.hypot(nx - sp.x, ny - sp.y) < 0.075 && dist > 0.004) {
+                sp.clean = true;
+                newlyClean = true;
+                ENGINE.spawnParticles(sp.x, sp.y, '#e2e8f0', 6);
+              }
+            });
+            if (newlyClean) AUDIO.sfx('scrub');
+            const cleanCount = d.spots.filter(s => s.clean).length;
+            UI.setTaskMeter('Kebersihan Sisik:', (cleanCount / d.spots.length) * 100);
+            if (cleanCount === d.spots.length) {
+              this.advanceSubStep(() => this.setupFishSubStep(1));
+            }
+          } else if (STATE.subStep === 1) {
+            d.toolX = nx; d.toolY = ny;
+            if (Math.hypot(nx - 0.5, ny - 0.52) < 0.26 && dist > 0.004) {
+              d.rinsePct = Math.min(100, d.rinsePct + dist * 160);
+              if (Math.random() < 0.25) {
+                AUDIO.sfx('pour');
+                ENGINE.spawnParticles(nx, ny + 0.05, '#38bdf8', 4);
+              }
+              UI.setTaskMeter('Bilasan Air:', d.rinsePct);
+              if (d.rinsePct >= 100) {
+                this.advanceSubStep(() => this.setupFishSubStep(2));
+              }
+            }
+          } else if (STATE.subStep === 2) {
+            d.cuts.forEach(c => {
+              if (!c.done && Math.abs(nx - c.x) < 0.045 && ny > 0.34 && ny < 0.70 && dist > 0.006) {
+                c.done = true;
+                AUDIO.sfx('chop');
+                ENGINE.spawnParticles(c.x, 0.52, '#fecdd3', 10);
+              }
+            });
+            const doneCuts = d.cuts.filter(c => c.done).length;
+            UI.setTaskMeter('Potongan Ikan:', (doneCuts / d.cuts.length) * 100);
+            if (doneCuts === d.cuts.length) {
+              this.advanceSubStep(() => this.setupFishSubStep(3));
+            }
+          } else if (STATE.subStep === 3) {
+            d.toolX = nx; d.toolY = ny;
+            if (Math.hypot(nx - 0.5, ny - 0.52) < 0.26 && dist > 0.004) {
+              d.limePct = Math.min(100, d.limePct + dist * 170);
+              if (Math.random() < 0.25) {
+                AUDIO.sfx('pour');
+                ENGINE.spawnParticles(nx, ny + 0.05, '#bef264', 4);
+              }
+              UI.setTaskMeter('Marinasi Jeruk Nipis:', d.limePct);
+              if (d.limePct >= 100) {
+                UI.setMamaDialogue('Ikan sudah bersih dan harum jeruk nipis! Lanjut siapkan bumbu.', 'proud');
+                this.completeStage();
+              }
+            }
+          }
+        }
+
+        // STAGE 2: Chopping & Peeling Spices
+        else if (STATE.stageIndex === 2) {
+          d.knifeX = nx;
+          d.knifeY = ny;
+          const cur = d.queue[d.idx];
+          if (!cur) return;
+          if (cur.mode === 'peel') {
+            if (Math.hypot(nx - 0.5, ny - 0.52) < 0.24 && dist > 0.005) {
+              cur.progress = Math.min(100, cur.progress + dist * 180);
+              if (Math.random() < 0.25) {
+                AUDIO.sfx('scrub');
+                ENGINE.spawnParticles(nx, ny, cur.skin, 4);
+              }
+              if (cur.progress >= 100) {
+                UI.toast(`${cur.name} selesai dikupas!`);
+                if (d.idx + 1 >= d.queue.length) {
+                  UI.setMamaDialogue('Semua bumbu teriris rapi! Mari kita haluskan di cobek.', 'proud');
+                  this.completeStage();
+                } else {
+                  this.advanceSubStep(() => {
+                    d.idx++;
+                    this.updateChopSubStep();
+                  });
+                }
+              }
+            }
+          } else if (cur.mode === 'slice') {
+            cur.cuts.forEach((cx, idx) => {
+              if (!cur.cutDone[idx] && Math.abs(nx - cx) < 0.042 && ny > 0.34 && ny < 0.70 && dist > 0.006) {
+                cur.cutDone[idx] = true;
+                const err = Math.abs(nx - cx);
+                const acc = err < 0.018 ? 100 : 88;
+                d.accuracySum += acc;
+                d.accuracyCount++;
+                AUDIO.sfx('chop');
+                ENGINE.spawnParticles(cx, 0.52, cur.color, 8);
+                UI.toast(acc === 100 ? 'Potongan Presisi! ✨' : 'Potongan Bagus!');
+              }
+            });
+            if (cur.cutDone.every(Boolean)) {
+              if (d.idx + 1 >= d.queue.length) {
+                const avg = d.accuracyCount ? Math.round(d.accuracySum / d.accuracyCount) : 95;
+                STATE.scores.chopping = Math.round((STATE.scores.chopping + avg) / 2);
+                UI.setMamaDialogue('Hebat! Semua bumbu sudah siap dihaluskan di cobek batu.', 'proud');
+                this.completeStage();
+              } else {
+                this.advanceSubStep(() => {
+                  d.idx++;
+                  this.updateChopSubStep();
+                });
+              }
+            }
+          }
+        }
+
+        // STAGE 3: Grinding Spices in Cobek
+        else if (STATE.stageIndex === 3) {
+          const dx = nx - 0.5;
+          const dy = ny - 0.54;
+          if (Math.hypot(dx, dy) < 0.32) {
+            d.ulekanX = nx;
+            d.ulekanY = ny;
+            const ang = Math.atan2(dy, dx);
+            let diff = ang - d.lastAngle;
+            while (diff > Math.PI) diff -= Math.PI * 2;
+            while (diff < -Math.PI) diff += Math.PI * 2;
+            d.lastAngle = ang;
+            d.smoothness = Math.min(100, d.smoothness + Math.abs(diff) * 5.2);
+            if (Math.random() < 0.22) {
+              AUDIO.sfx('grind');
+              ENGINE.spawnParticles(nx, ny, '#f59e0b', 3);
+            }
+            UI.setTaskMeter('Tingkat Kehalusan:', d.smoothness);
+            if (d.smoothness >= 100) {
+              STATE.scores.spices = 98;
+              UI.setMamaDialogue('Wah, bumbu kuningnya sudah halus dan harum sekali! Sekarang kita masak.', 'proud');
+              this.completeStage();
+            }
+          }
+        }
+
+        // STAGE 4: Cooking Ikan Kuah Kuning
+        else if (STATE.stageIndex === 4) {
+          if (STATE.subStep === 0 && d.dragItem) {
+            if (d.dragItem === 'oil') {
+              d.oilPos = { x: nx, y: ny };
+              if (Math.hypot(nx - 0.5, ny - 0.58) < 0.2) {
+                d.oilAdded = true; d.dragItem = null;
+                AUDIO.sfx('pour');
+                UI.toast('Minyak dituang ke panci!');
+              }
+            } else if (d.dragItem === 'spice') {
+              d.spicePos = { x: nx, y: ny };
+              if (Math.hypot(nx - 0.5, ny - 0.58) < 0.2) {
+                d.spiceAdded = true; d.dragItem = null;
+                AUDIO.sfx('sizzle');
+                ENGINE.spawnParticles(0.5, 0.58, '#f59e0b', 12);
+                UI.toast('Bumbu halus masuk!');
+              }
+            }
+            const pct = (d.oilAdded ? 50 : 0) + (d.spiceAdded ? 50 : 0);
+            UI.setTaskMeter('Persiapan Tumis:', pct);
+            if (d.oilAdded && d.spiceAdded) {
+              this.advanceSubStep(() => this.setupCookFishSubStep(1));
+            }
+          } else if (STATE.subStep === 1) {
+            if (Math.hypot(nx - 0.5, ny - 0.58) < 0.26 && dist > 0.004) {
+              d.stirPct = Math.min(100, d.stirPct + dist * 145);
+              d.spoonAngle += dist * 14;
+              if (Math.random() < 0.2) {
+                AUDIO.sfx('sizzle');
+                ENGINE.spawnParticles(nx, ny, '#fde047', 3);
+              }
+              UI.setTaskMeter('Keharuman Tumisan:', d.stirPct);
+              if (d.stirPct >= 100) {
+                this.advanceSubStep(() => this.setupCookFishSubStep(2));
+              }
+            }
+          } else if (STATE.subStep === 2 && d.dragItem === 'water') {
+            d.waterPos = { x: nx, y: ny };
+            if (Math.hypot(nx - 0.5, ny - 0.52) < 0.24) {
+              d.waterPct = Math.min(100, d.waterPct + 2.6);
+              if (Math.random() < 0.25) {
+                AUDIO.sfx('pour');
+                ENGINE.spawnParticles(0.5, 0.56, '#38bdf8', 4);
+              }
+              UI.setTaskMeter('Volume Kuah:', d.waterPct);
+              if (d.waterPct >= 100) {
+                d.dragItem = null;
+                this.advanceSubStep(() => this.setupCookFishSubStep(3));
+              }
+            }
+          } else if (STATE.subStep === 3 && d.dragItem) {
+            if (d.dragItem === 'fish') {
+              d.fishPos = { x: nx, y: ny };
+              if (Math.hypot(nx - 0.5, ny - 0.58) < 0.2) {
+                d.fishAdded = true; d.dragItem = null;
+                AUDIO.sfx('pop');
+                ENGINE.spawnParticles(0.5, 0.58, '#f8fafc', 10);
+                UI.toast('Ikan segar masuk ke kuah!');
+              }
+            } else if (d.dragItem === 'herb') {
+              d.herbPos = { x: nx, y: ny };
+              if (Math.hypot(nx - 0.5, ny - 0.58) < 0.2) {
+                d.herbAdded = true; d.dragItem = null;
+                AUDIO.sfx('pop');
+                ENGINE.spawnParticles(0.5, 0.58, '#22c55e', 10);
+                UI.toast('Kemangi, tomat & garam masuk!');
+              }
+            }
+            const pct = (d.fishAdded ? 50 : 0) + (d.herbAdded ? 50 : 0);
+            UI.setTaskMeter('Isian Kuah:', pct);
+            if (d.fishAdded && d.herbAdded) {
+              this.advanceSubStep(() => this.setupCookFishSubStep(4));
+            }
+          } else if (STATE.subStep === 4) {
+            if (Math.hypot(nx - 0.5, ny - 0.58) < 0.24 && dist > 0.005) {
+              d.simmerProgress = Math.min(100, d.simmerProgress + dist * 16);
+              if (Math.random() < 0.15) AUDIO.sfx('stir');
+            }
+          }
+        }
+
+        // STAGE 5: Making Papeda
+        else if (STATE.stageIndex === 5) {
+          if (STATE.subStep === 0 && d.dragItem) {
+            if (d.dragItem === 'sagu') {
+              d.saguPos = { x: nx, y: ny };
+              if (Math.hypot(nx - 0.5, ny - 0.58) < 0.2) {
+                d.saguAdded = true; d.dragItem = null;
+                AUDIO.sfx('pop');
+                ENGINE.spawnParticles(0.5, 0.58, '#f8fafc', 12);
+                UI.toast('Tepung sagu masuk ke mangkuk!');
+              }
+            } else if (d.dragItem === 'garam') {
+              d.garamPos = { x: nx, y: ny };
+              if (Math.hypot(nx - 0.5, ny - 0.58) < 0.2) {
+                d.garamAdded = true; d.dragItem = null;
+                AUDIO.sfx('pop');
+                UI.toast('Garam secukupnya ditambahkan!');
+              }
+            }
+            UI.setTaskMeter('Bahan Sagu:', (d.saguAdded ? 50 : 0) + (d.garamAdded ? 50 : 0));
+            if (d.saguAdded && d.garamAdded) {
+              this.advanceSubStep(() => this.setupPapedaSubStep(1));
+            }
+          } else if (STATE.subStep === 1) {
+            if (d.dragItem === 'coldWater' && d.coldWaterPct < 100) {
+              d.waterPos = { x: nx, y: ny };
+              if (Math.hypot(nx - 0.5, ny - 0.52) < 0.24) {
+                d.coldWaterPct = Math.min(100, d.coldWaterPct + 2.8);
+                if (Math.random() < 0.25) {
+                  AUDIO.sfx('pour');
+                  ENGINE.spawnParticles(0.5, 0.56, '#bae6fd', 4);
+                }
+                UI.setTaskMeter('Larutan Sagu:', d.coldWaterPct * 0.5);
+                if (d.coldWaterPct >= 100) {
+                  d.dragItem = null;
+                  UI.toast('Sekarang aduk larutan sagu sampai rata!');
+                }
+              }
+            } else if (d.coldWaterPct >= 100) {
+              if (Math.hypot(nx - 0.5, ny - 0.58) < 0.26 && dist > 0.004) {
+                d.coldStirPct = Math.min(100, d.coldStirPct + dist * 160);
+                d.spoonAngle += dist * 14;
+                if (Math.random() < 0.2) AUDIO.sfx('stir');
+                UI.setTaskMeter('Larutan Sagu:', 50 + d.coldStirPct * 0.5);
+                if (d.coldStirPct >= 100) {
+                  this.advanceSubStep(() => this.setupPapedaSubStep(2));
+                }
+              }
+            }
+          } else if (STATE.subStep === 2 && d.dragItem === 'kettle') {
+            d.kettlePos = { x: nx, y: ny };
+            if (Math.hypot(nx - 0.5, ny - 0.52) < 0.24) {
+              d.hotWaterPct = Math.min(100, d.hotWaterPct + 2.6);
+              if (Math.random() < 0.28) {
+                AUDIO.sfx('pour');
+                ENGINE.spawnParticles(0.5, 0.56, '#f1f5f9', 5, true);
+              }
+              UI.setTaskMeter('Air Mendidih:', d.hotWaterPct);
+              if (d.hotWaterPct >= 100) {
+                d.dragItem = null;
+                this.advanceSubStep(() => this.setupPapedaSubStep(3));
+              }
+            }
+          } else if (STATE.subStep === 3) {
+            if (Math.hypot(nx - 0.5, ny - 0.58) < 0.26 && dist > 0.004) {
+              d.gelPct = Math.min(100, d.gelPct + dist * 125);
+              d.spoonAngle += dist * 18;
+              if (Math.random() < 0.22) {
+                AUDIO.sfx('stir');
+                ENGINE.spawnParticles(nx, ny, '#ffffff', 3);
+              }
+              UI.setTaskMeter('Tekstur Papeda:', d.gelPct);
+              if (d.gelPct >= 100) {
+                this.advanceSubStep(() => this.setupPapedaSubStep(4));
+              }
+            }
+          } else if (STATE.subStep === 4) {
+            if (Math.hypot(nx - 0.5, ny - 0.58) < 0.26 && dist > 0.004) {
+              d.twirlPct = Math.min(100, d.twirlPct + dist * 155);
+              d.spoonAngle += dist * 16;
+              if (Math.random() < 0.2) AUDIO.sfx('stir');
+              UI.setTaskMeter('Gulungan Papeda:', d.twirlPct);
+              if (d.twirlPct >= 100) {
+                STATE.scores.papedaMaking = 97;
+                UI.setMamaDialogue('Luar biasa! Papedamu kenyal, bening, dan siap ditata di meja saji!', 'proud');
+                this.completeStage();
+              }
+            }
+          }
+        }
+
+        // STAGE 6: Plating
+        else if (STATE.stageIndex === 6 && d.dragged) {
+          d.dragged.x = nx;
+          d.dragged.y = ny;
+          if (Math.hypot(nx - d.dragged.targetX, ny - d.dragged.targetY) < 0.14) {
+            this.placePlatingItem(d.dragged);
+          }
+        }
+      },
+
+      placePlatingItem(it) {
+        if (STATE.isTransitioning || it.placed) return;
+        const d = STATE.stageData;
+        it.x = it.targetX;
+        it.y = it.targetY;
+        it.placed = true;
+        d.dragged = null;
+        AUDIO.sfx('success');
+        ENGINE.spawnParticles(it.x, it.y, '#fbbf24', 12);
+        const placedCount = d.items.filter(i => i.placed).length;
+        UI.setTaskMeter('Kelengkapan Sajian:', (placedCount / d.items.length) * 100);
+        UI.updateChecklist([
+          'Letakkan Mangkuk Papeda',
+          'Sajikan Ikan Kuah Kuning',
+          'Tambahkan Pelengkap Segar'
+        ], Math.min(2, placedCount));
+
+        if (placedCount >= d.items.length) {
+          STATE.isTransitioning = true;
+          STATE.scores.plating = 98;
+          UI.setMamaDialogue('Sempurna! Hidangan Papeda dan Ikan Kuah Kuning buatanmu tampak begitu menggugah selera!', 'proud');
+          STATE.schedule(() => APP.finishGame(), 950);
+        }
+      },
+
+      onPointerUp(nx, ny, wasQuickTap) {
+        if (STATE.isTransitioning) return;
+        const d = STATE.stageData;
+        if (STATE.stageIndex === 0 && d.dragged) {
+          if (wasQuickTap) {
+            this.collectPrepItem(d.dragged);
+          } else {
+            d.dragged.x = d.dragged.homeX;
+            d.dragged.y = d.dragged.homeY;
+            d.dragged = null;
+          }
+        } else if (STATE.stageIndex === 4 && wasQuickTap && d.dragItem) {
+          if (STATE.subStep === 0) {
+            if (d.dragItem === 'oil' && !d.oilAdded) { d.oilAdded = true; AUDIO.sfx('pour'); UI.toast('Minyak dituang ke panci!'); }
+            if (d.dragItem === 'spice' && !d.spiceAdded) { d.spiceAdded = true; AUDIO.sfx('sizzle'); UI.toast('Bumbu halus masuk!'); }
+            d.dragItem = null;
+            const pct = (d.oilAdded ? 50 : 0) + (d.spiceAdded ? 50 : 0);
+            UI.setTaskMeter('Persiapan Tumis:', pct);
+            if (d.oilAdded && d.spiceAdded) this.advanceSubStep(() => this.setupCookFishSubStep(1));
+          } else if (STATE.subStep === 3) {
+            if (d.dragItem === 'fish' && !d.fishAdded) { d.fishAdded = true; AUDIO.sfx('pop'); UI.toast('Ikan segar masuk!'); }
+            if (d.dragItem === 'herb' && !d.herbAdded) { d.herbAdded = true; AUDIO.sfx('pop'); UI.toast('Kemangi & garam masuk!'); }
+            d.dragItem = null;
+            const pct = (d.fishAdded ? 50 : 0) + (d.herbAdded ? 50 : 0);
+            UI.setTaskMeter('Isian Kuah:', pct);
+            if (d.fishAdded && d.herbAdded) this.advanceSubStep(() => this.setupCookFishSubStep(4));
+          }
+        } else if (STATE.stageIndex === 5 && wasQuickTap && d.dragItem && STATE.subStep === 0) {
+          if (d.dragItem === 'sagu' && !d.saguAdded) { d.saguAdded = true; AUDIO.sfx('pop'); UI.toast('Tepung sagu masuk!'); }
+          if (d.dragItem === 'garam' && !d.garamAdded) { d.garamAdded = true; AUDIO.sfx('pop'); UI.toast('Garam ditambahkan!'); }
+          d.dragItem = null;
+          UI.setTaskMeter('Bahan Sagu:', (d.saguAdded ? 50 : 0) + (d.garamAdded ? 50 : 0));
+          if (d.saguAdded && d.garamAdded) this.advanceSubStep(() => this.setupPapedaSubStep(1));
+        } else if (STATE.stageIndex === 6 && d.dragged) {
+          if (wasQuickTap) {
+            this.placePlatingItem(d.dragged);
+          } else {
+            d.dragged = null;
+          }
+        } else if (STATE.stageIndex === 4 || STATE.stageIndex === 5) {
+          d.dragItem = null;
+        }
+      },
+
+      update(dt) {
+        if (STATE.isTransitioning) return;
+        const d = STATE.stageData;
+
+        // Stage 4 Simmering Temperature Control
+        if (STATE.stageIndex === 4 && STATE.subStep === 4) {
+          if (d.holdingHeat) {
+            d.heatTemp = Math.min(100, d.heatTemp + dt * 34);
+          } else {
+            d.heatTemp = Math.max(15, d.heatTemp - dt * 21);
+          }
+
+          const needle = document.getElementById('heat-needle');
+          const statusTxt = document.getElementById('heat-status-text');
+          needle.style.left = `${d.heatTemp}%`;
+
+          d.totalSimmerTime += dt;
+          if (d.heatTemp >= 40 && d.heatTemp <= 74) {
+            statusTxt.textContent = 'Pas (Hijau)';
+            statusTxt.style.color = '#86efac';
+            d.goodHeatTime += dt;
+            d.simmerProgress = Math.min(100, d.simmerProgress + dt * 11.5);
+            if (Math.random() < 0.14) ENGINE.spawnParticles(0.5, 0.54, '#ffffff', 1, true);
+          } else if (d.heatTemp > 74) {
+            statusTxt.textContent = 'Terlalu Panas!';
+            statusTxt.style.color = '#fca5a5';
+            d.simmerProgress = Math.min(100, d.simmerProgress + dt * 5);
+            if (d.totalSimmerTime - d.lastHintTime > 2.2) {
+              d.lastHintTime = d.totalSimmerTime;
+              UI.toast('Api terlalu besar! Lepas tombol api sebentar.', true);
+            }
+          } else {
+            statusTxt.textContent = 'Api Kecil';
+            statusTxt.style.color = '#bae6fd';
+            d.simmerProgress = Math.min(100, d.simmerProgress + dt * 4);
+          }
+
+          UI.setTaskMeter('Kematangan Ikan:', d.simmerProgress);
+          if (d.simmerProgress >= 100) {
+            const ratio = d.totalSimmerTime > 0 ? (d.goodHeatTime / d.totalSimmerTime) : 0.9;
+            STATE.scores.fishCooking = Math.max(78, Math.min(100, Math.round(75 + ratio * 25)));
+            UI.setMamaDialogue('Ikan Kuah Kuning sudah matang sempurna! Kuahnya kuning segar dan ikannya lembut.', 'proud');
+            this.completeStage();
+          }
+        }
+      },
+
+      /* ============================================================================
+         HD CANVAS VISUAL RENDERING
+      ============================================================================ */
+      render(ctx, w, h, animTime) {
+        const d = STATE.stageData;
+        const isPortrait = h > w;
+        const minDim = Math.min(w, h);
+        ctx.textAlign = 'center';
+
+        const drawBoard = () => {
+          const bx = isPortrait ? w * 0.11 : w * 0.22;
+          const bw = isPortrait ? w * 0.78 : w * 0.56;
+          HD_RENDER.drawWoodBoard(ctx, bx, h * 0.30, bw, h * 0.44);
+        };
+
+        // STAGE 0: Ingredient Prep
+        if (STATE.stageIndex === 0) {
+          const trayX = isPortrait ? w * 0.11 : w * 0.25;
+          const trayW = isPortrait ? w * 0.78 : w * 0.50;
+          const trayY = isPortrait ? h * 0.69 : h * 0.61;
+          const trayH = isPortrait ? h * 0.25 : h * 0.30;
+
+          ctx.fillStyle = 'rgba(15, 6, 2, 0.32)';
+          ctx.beginPath();
+          ctx.roundRect(trayX + 4, trayY + 6, trayW, trayH, 18);
+          ctx.fill();
+
+          const trayGrad = ctx.createLinearGradient(trayX, trayY, trayX, trayY + trayH);
+          trayGrad.addColorStop(0, '#fffbeb');
+          trayGrad.addColorStop(1, '#fde68a');
+          ctx.fillStyle = trayGrad;
+          ctx.beginPath();
+          ctx.roundRect(trayX, trayY, trayW, trayH, 18);
+          ctx.fill();
+          ctx.strokeStyle = '#d97706';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+
+          ctx.fillStyle = '#78350f';
+          ctx.font = `bold ${isPortrait ? 12 : 14}px sans-serif`;
+          ctx.fillText(`BAKI PERSIAPAN (${d.collectedCount}/${d.totalRequired} Bahan Utama)`, w * 0.5, trayY + 23);
+          ctx.font = '11px sans-serif';
+          ctx.fillStyle = '#92400e';
+          ctx.fillText('Ketuk atau seret bahan ke dalam baki ini', w * 0.5, trayY + 40);
+
+          const collectedList = d.items.filter(i => i.collected);
+          collectedList.forEach((it, idx) => {
+            const cx = trayX + 26 + (idx % 6) * ((trayW - 52) / 5);
+            const cy = trayY + 66 + Math.floor(idx / 6) * 28;
+            ctx.font = '20px sans-serif';
+            ctx.fillText(it.icon, cx, cy);
+          });
+
+          const itemR = isPortrait ? Math.min(24, w * 0.062) : 28;
+          d.items.forEach(it => {
+            if (it.collected) return;
+            const ix = it.x * w;
+            const iy = it.y * h;
+            ctx.fillStyle = 'rgba(0,0,0,0.28)';
+            ctx.beginPath();
+            ctx.arc(ix + 2, iy + 4, itemR, 0, Math.PI * 2);
+            ctx.fill();
+
+            const badgeGrad = ctx.createRadialGradient(ix - 6, iy - 6, 4, ix, iy, itemR);
+            badgeGrad.addColorStop(0, '#ffffff');
+            badgeGrad.addColorStop(1, '#fef3c7');
+            ctx.fillStyle = badgeGrad;
+            ctx.beginPath();
+            ctx.arc(ix, iy, itemR, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = it.required ? '#d97706' : '#a8a29e';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            ctx.font = `${Math.round(itemR * 0.86)}px sans-serif`;
+            ctx.fillText(it.icon, ix, iy + itemR * 0.3);
+
+            ctx.fillStyle = '#fef3c7';
+            ctx.font = `bold ${isPortrait ? 10 : 11}px sans-serif`;
+            ctx.fillText(it.name, ix, iy + itemR + 13);
+          });
+        }
+
+        // STAGE 1: Fish Cleaning
+        else if (STATE.stageIndex === 1) {
+          drawBoard();
+          const fishRx = isPortrait ? w * 0.24 : w * 0.18;
+          const fishRy = h * 0.105;
+
+          HD_RENDER.drawDetailedFish(ctx, w * 0.5, h * 0.52, fishRx, fishRy, {
+            wetRatio: (d.rinsePct || 0) / 100,
+            limeRatio: (d.limePct || 0) / 100,
+            cuts: d.cuts || []
+          });
+
+          if (STATE.subStep === 0) {
+            d.spots.forEach(sp => {
+              if (!sp.clean) {
+                ctx.fillStyle = '#e2e8f0';
+                ctx.beginPath();
+                ctx.arc(sp.x * w, sp.y * h, 7, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#475569';
+                ctx.lineWidth = 1.2;
+                ctx.stroke();
+              }
+            });
+            ctx.font = '36px sans-serif';
+            ctx.fillText('🧽', d.toolX * w, d.toolY * h);
+          } else if (STATE.subStep === 1) {
+            ctx.font = '40px sans-serif';
+            ctx.fillText('🫗', d.toolX * w, d.toolY * h);
+          } else if (STATE.subStep === 2) {
+            d.cuts.forEach(c => {
+              if (!c.done) {
+                ctx.strokeStyle = '#fef08a';
+                ctx.lineWidth = 4;
+                ctx.setLineDash([7, 5]);
+                ctx.beginPath();
+                ctx.moveTo(c.x * w, h * 0.38);
+                ctx.lineTo(c.x * w, h * 0.66);
+                ctx.stroke();
+                ctx.setLineDash([]);
+              }
+            });
+          } else if (STATE.subStep === 3) {
+            ctx.font = '40px sans-serif';
+            ctx.fillText('🍋', d.toolX * w, d.toolY * h);
+          }
+        }
+
+        // STAGE 2: Chopping & Peeling
+        else if (STATE.stageIndex === 2) {
+          drawBoard();
+          const cur = d.queue[d.idx];
+          if (!cur) return;
+
+          ctx.fillStyle = '#fef3c7';
+          ctx.font = 'bold 15px sans-serif';
+          ctx.fillText(cur.name, w * 0.5, h * 0.36);
+
+          HD_RENDER.drawSpiceHD(ctx, w, h, cur);
+        }
+
+        // STAGE 3: Cobek Grinding
+        else if (STATE.stageIndex === 3) {
+          HD_RENDER.drawCobekHD(ctx, w, h, d);
+        }
+
+        // STAGE 4: Cooking Ikan Kuah Kuning
+        else if (STATE.stageIndex === 4) {
+          HD_RENDER.drawCookingPotHD(ctx, w, h, d, animTime);
+
+          const potR = Math.min(minDim * 0.31, 114);
+          const cy = h * 0.58;
+
+          if (STATE.subStep === 1) {
+            const sx = w * 0.5 + Math.cos(d.spoonAngle) * (potR * 0.36);
+            const sy = cy + Math.sin(d.spoonAngle) * (potR * 0.36);
+            ctx.strokeStyle = '#451a03';
+            ctx.lineWidth = 10;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(sx, sy);
+            ctx.lineTo(sx + 42, sy - 50);
+            ctx.stroke();
+          }
+
+          const drawProp = (pos, icon, label) => {
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.beginPath();
+            ctx.arc(pos.x * w + 2, pos.y * h + 4, 30, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#fffbeb';
+            ctx.beginPath();
+            ctx.arc(pos.x * w, pos.y * h, 30, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#d97706';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+            ctx.font = '25px sans-serif';
+            ctx.fillText(icon, pos.x * w, pos.y * h + 8);
+            ctx.fillStyle = '#fef3c7';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText(label, pos.x * w, pos.y * h + 44);
+          };
+
+          if (STATE.subStep === 0) {
+            if (!d.oilAdded) drawProp(d.oilPos, '🫗', 'Minyak');
+            if (!d.spiceAdded) drawProp(d.spicePos, '🥣', 'Bumbu Halus');
+          } else if (STATE.subStep === 2) {
+            drawProp(d.waterPos, '🫗', 'Air Bersih');
+          } else if (STATE.subStep === 3) {
+            if (!d.fishAdded) drawProp(d.fishPos, '🐟', 'Ikan Segar');
+            if (!d.herbAdded) drawProp(d.herbPos, '🌿', 'Kemangi & Garam');
+          }
+        }
+
+        // STAGE 5: Making Papeda
+        else if (STATE.stageIndex === 5) {
+          HD_RENDER.drawPapedaBowlHD(ctx, w, h, d);
+
+          const drawProp = (pos, icon, label) => {
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.beginPath();
+            ctx.arc(pos.x * w + 2, pos.y * h + 4, 30, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#fffbeb';
+            ctx.beginPath();
+            ctx.arc(pos.x * w, pos.y * h, 30, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#d97706';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+            ctx.font = '25px sans-serif';
+            ctx.fillText(icon, pos.x * w, pos.y * h + 8);
+            ctx.fillStyle = '#fef3c7';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText(label, pos.x * w, pos.y * h + 44);
+          };
+
+          if (STATE.subStep === 0) {
+            if (!d.saguAdded) drawProp(d.saguPos, '🥣', 'Tepung Sagu');
+            if (!d.garamAdded) drawProp(d.garamPos, '🧂', 'Garam');
+          } else if (STATE.subStep === 1 && d.coldWaterPct < 100) {
+            drawProp(d.waterPos, '💧', 'Air Dingin');
+          } else if (STATE.subStep === 2) {
+            drawProp(d.kettlePos, '🫖', 'Air Mendidih');
+          }
+        }
+
+        // STAGE 6: Plating (HD Cooked Dishes on Woven Wooden Dulang)
+        else if (STATE.stageIndex === 6) {
+          const matX = isPortrait ? w * 0.10 : w * 0.24;
+          const matW = isPortrait ? w * 0.80 : w * 0.52;
+          HD_RENDER.drawWoodBoard(ctx, matX, h * 0.36, matW, h * 0.36);
+
+          d.items.forEach(it => {
+            const big = it.id === 'papeda' || it.id === 'ikan';
+            const r = big ? Math.min(40, minDim * 0.105) : Math.min(24, minDim * 0.062);
+
+            if (!it.placed) {
+              ctx.strokeStyle = 'rgba(254, 240, 138, 0.9)';
+              ctx.lineWidth = 3;
+              ctx.setLineDash([6, 5]);
+              ctx.beginPath();
+              ctx.arc(it.targetX * w, it.targetY * h, r, 0, Math.PI * 2);
+              ctx.stroke();
+              ctx.setLineDash([]);
+            }
+
+            const ix = it.x * w;
+            const iy = it.y * h;
+
+            // Shadow
+            ctx.fillStyle = 'rgba(0,0,0,0.32)';
+            ctx.beginPath();
+            ctx.arc(ix + 2, iy + 5, r, 0, Math.PI * 2);
+            ctx.fill();
+
+            if (it.id === 'papeda') {
+              // HD Miniature Bowl of Glossy Cooked Papeda + Gata-Gata
+              ctx.fillStyle = '#fef3c7';
+              ctx.beginPath();
+              ctx.arc(ix, iy, r, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.strokeStyle = '#92400e';
+              ctx.lineWidth = 3;
+              ctx.stroke();
+
+              const pGrad = ctx.createRadialGradient(ix - 8, iy - 8, 3, ix, iy, r * 0.82);
+              pGrad.addColorStop(0, '#ffffff');
+              pGrad.addColorStop(0.6, '#cbd5e1');
+              pGrad.addColorStop(1, '#64748b');
+              ctx.fillStyle = pGrad;
+              ctx.beginPath();
+              ctx.arc(ix, iy, r * 0.82, 0, Math.PI * 2);
+              ctx.fill();
+
+              // Specular Highlight & Gata-Gata
+              ctx.strokeStyle = '#ffffff';
+              ctx.lineWidth = 3;
+              ctx.beginPath();
+              ctx.arc(ix, iy, r * 0.45, -2.5, -0.5);
+              ctx.stroke();
+
+              ctx.strokeStyle = '#78350f';
+              ctx.lineWidth = 3.5;
+              ctx.beginPath();
+              ctx.moveTo(ix - r * 0.7, iy - r * 0.6);
+              ctx.lineTo(ix + r * 0.2, iy + r * 0.1);
+              ctx.stroke();
+            } else if (it.id === 'ikan') {
+              // HD Miniature Bowl of Steaming Ikan Kuah Kuning
+              ctx.fillStyle = '#fffbeb';
+              ctx.beginPath();
+              ctx.arc(ix, iy, r, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.strokeStyle = '#92400e';
+              ctx.lineWidth = 3;
+              ctx.stroke();
+
+              const kGrad = ctx.createRadialGradient(ix - 8, iy - 8, 4, ix, iy, r * 0.84);
+              kGrad.addColorStop(0, '#fef08a');
+              kGrad.addColorStop(0.6, '#facc15');
+              kGrad.addColorStop(1, '#ca8a04');
+              ctx.fillStyle = kGrad;
+              ctx.beginPath();
+              ctx.arc(ix, iy, r * 0.84, 0, Math.PI * 2);
+              ctx.fill();
+
+              // Cooked White Fish Piece inside bowl
+              ctx.fillStyle = '#ffffff';
+              ctx.beginPath();
+              ctx.ellipse(ix, iy, r * 0.46, r * 0.24, -0.2, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.strokeStyle = '#ca8a04';
+              ctx.lineWidth = 1.5;
+              ctx.stroke();
+            } else {
+              ctx.fillStyle = '#fffbeb';
+              ctx.beginPath();
+              ctx.arc(ix, iy, r, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.strokeStyle = '#b45309';
+              ctx.lineWidth = 2.5;
+              ctx.stroke();
+
+              const icons = { kemangi: '🌿', jeruk: '🍋' };
+              ctx.font = `${Math.round(r * 0.88)}px sans-serif`;
+              ctx.fillText(icons[it.id], ix, iy + r * 0.3);
+            }
+
+            if (!it.placed) {
+              ctx.fillStyle = '#fef3c7';
+              ctx.font = 'bold 11px sans-serif';
+              ctx.fillText(it.name, ix, iy + r + 14);
+            }
+          });
+        }
+      }
+    };
+
+    /* ============================================================================
+       11. MAIN APPLICATION CONTROLLER
+    ============================================================================ */
+    const APP = {
+      init() {
+        UI.initVisuals();
+        ENGINE.init();
+      },
+
+      startNewGame() {
+        STATE.clearScheduled();
+        AUDIO.init();
+        AUDIO.sfx('pop');
+        STATE.paused = false;
+        STATE.isTransitioning = false;
+        STATE.gameFinished = false;
+        STATE.stageIndex = 0;
+        STATE.subStep = 0;
+        STATE.elapsedSeconds = 0;
+        STATE.scores = {
+          chopping: 100,
+          spices: 100,
+          fishCooking: 100,
+          papedaMaking: 100,
+          plating: 100
+        };
+
+        this.startTimer();
+        UI.showScreen('screen-game');
+        AUDIO.startBgm();
+        STAGES.loadStage(0);
+      },
+
+      startTimer() {
+        clearInterval(STATE.timerInterval);
+        this.updateTimerDisplay();
+        STATE.timerInterval = setInterval(() => {
+          if (!STATE.paused && STATE.screen === 'game') {
+            STATE.elapsedSeconds++;
+            this.updateTimerDisplay();
+          }
+        }, 1000);
+      },
+
+      updateTimerDisplay() {
+        const mins = String(Math.floor(STATE.elapsedSeconds / 60)).padStart(2, '0');
+        const secs = String(STATE.elapsedSeconds % 60).padStart(2, '0');
+        document.getElementById('hud-timer').textContent = `⏱️ ${mins}:${secs}`;
+      },
+
+      pauseGame() {
+        STATE.paused = true;
+        if (STATE.stageData) STATE.stageData.holdingHeat = false;
+        document.getElementById('btn-hold-heat').classList.remove('active-flame');
+        UI.openModal('modal-pause');
+      },
+
+      resumeGame() {
+        STATE.paused = false;
+        UI.closeModal('modal-pause');
+      },
+
+      confirmQuitToMenu() {
+        UI.closeModal('modal-pause');
+        this.goToMenu();
+      },
+
+      goToMenu() {
+        STATE.clearScheduled();
+        STATE.paused = false;
+        STATE.isTransitioning = false;
+        clearInterval(STATE.timerInterval);
+        AUDIO.stopBgm();
+        UI.showScreen('screen-menu');
+      },
+
+      finishGame() {
+        if (STATE.gameFinished) return;
+        STATE.clearScheduled();
+        STATE.gameFinished = true;
+        STATE.isTransitioning = false;
+
+        clearInterval(STATE.timerInterval);
+        AUDIO.stopBgm();
+        AUDIO.sfx('fanfare');
+
+        const s = STATE.scores;
+        const total = Math.round((s.chopping + s.spices + s.fishCooking + s.papedaMaking + s.plating) / 5);
+        const stars = total >= 90 ? 3 : (total >= 70 ? 2 : 1);
+        const rank = stars === 3 ? 'Master Koki Papua' : (stars === 2 ? 'Koki Kuliner Nusantara' : 'Penjelajah Rasa Papua');
+
+        const mins = String(Math.floor(STATE.elapsedSeconds / 60)).padStart(2, '0');
+        const secs = String(STATE.elapsedSeconds % 60).padStart(2, '0');
+        const timeStr = `${mins}:${secs}`;
+        const dateStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+        STATE.lastResult = { score: total, stars, rank, timeStr, dateStr };
+        STORAGE.saveEntry({ score: total, stars, rank, timeStr, dateStr });
+
+        document.getElementById('result-total-score').textContent = `${total} / 100`;
+        document.getElementById('result-rank-title').textContent = `Gelar: ${rank}`;
+        document.getElementById('result-time-taken').textContent = `Waktu Memasak: ${timeStr}`;
+
+        const starEls = document.querySelectorAll('#result-stars .star-icon');
+        starEls.forEach((el, idx) => {
+          el.classList.remove('earned');
+          if (idx < stars) {
+            setTimeout(() => el.classList.add('earned'), 220 * (idx + 1));
+          }
+        });
+
+        const comments = {
+          3: 'Luar biasa! Papedamu kenyal bening sempurna dan Ikan Kuah Kuningnya harum kaya rempah Papua!',
+          2: 'Bagus sekali! Masakan khas Papuamu lezat dan siap dinikmati bersama keluarga.',
+          1: 'Selamat sudah menyelesaikan masakan Papua! Terus berlatih mengaduk sagu dan menjaga api ya!'
+        };
+        document.getElementById('result-mama-comment').innerHTML = `💬 <strong>Mama:</strong> "${comments[stars]}"`;
+
+        document.getElementById('result-score-breakdown').innerHTML = `
+          <div class="score-row-item"><span>🔪 Ketepatan Potongan</span><strong>${s.chopping}%</strong></div>
+          <div class="score-row-item"><span>🪨 Kehalusan Bumbu</span><strong>${s.spices}%</strong></div>
+          <div class="score-row-item"><span>🐟 Ikan Kuah Kuning</span><strong>${s.fishCooking}%</strong></div>
+          <div class="score-row-item"><span>🥣 Tekstur Papeda</span><strong>${s.papedaMaking}%</strong></div>
+          <div class="score-row-item" style="grid-column:1/-1;"><span>🍽️ Kualitas Penyajian</span><strong>${s.plating}%</strong></div>
+        `;
+
+        UI.showScreen('screen-result');
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => APP.init());
+  </script>
+</body>
+</html>
